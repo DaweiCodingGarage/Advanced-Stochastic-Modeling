@@ -1,0 +1,109 @@
+\documentclass[12pt]{article} 
+% Formatting
+\tolerance=1000
+\usepackage[margin=1.2in]{geometry}
+
+
+\input{../../custom.tex}
+\newcommand{\rep}{\text{rep}}
+
+% Packages
+
+% \usepackage{amssymb,latexsym}
+\usepackage{amssymb,amsfonts,amsmath,latexsym,amsthm}
+\usepackage[usenames,dvipsnames]{color}
+\usepackage[]{graphicx}
+\usepackage[space]{grffile}
+\usepackage{mathrsfs}   % fancy math font
+% \usepackage[font=small,skip=0pt]{caption}
+\usepackage[skip=0pt]{caption}
+\usepackage{subcaption}
+\usepackage{verbatim}
+\usepackage{url}
+\usepackage{bm}
+\usepackage{dsfont}
+\usepackage{extarrows}
+\usepackage{multirow}
+% \usepackage{wrapfig}
+% \usepackage{epstopdf}
+\usepackage{rotating}
+\usepackage{tikz}
+\usetikzlibrary{fit}					% fitting shapes to coordinates
+%\usetikzlibrary{backgrounds}	% drawing the background after the foreground
+
+
+% \usepackage[dvipdfm,colorlinks,citecolor=blue,linkcolor=blue,urlcolor=blue]{hyperref}
+\usepackage[colorlinks,citecolor=blue,linkcolor=blue,urlcolor=blue]{hyperref}
+%\usepackage{hyperref}
+\usepackage[authoryear,round]{natbib}
+
+
+
+\title{Solution to BDA exercise 4.15 a
+}
+\author{Jeff Miller}
+%\date{\today}
+
+
+\begin{document}
+\maketitle
+
+Suppose $C(x)$ is a 50\% Bayesian posterior credible region. By definition, this means that for any $x$,
+$$ \Pr(\theta\in C(x) \mid x) = 0.5, $$
+where $x$ is a fixed value and $\theta | x$ is distributed according to the posterior.  To clarify, writing this probability out as an integral,
+$$ \Pr(\theta\in C(x) \mid x) = \int \1(\theta \in C(x)) p(\theta | x) d \theta = 0.5. $$
+%This gives us some set-valued function $C(x)$.
+
+The exercise is asking us to show that if $\theta \sim p(\theta)$ where $p(\theta)$ is the prior, and $X | \theta \sim p_\theta(x) = p(x|\theta)$, then there is a 50\% probability that $C(X)$ will contain $\theta$. In other words, we want to show that
+$$ \Pr(\theta \in C(X)) = 0.5, $$
+where
+$$ \Pr(\theta \in C(X)) = \int \1(\theta \in C(x)) p(x | \theta) p(\theta) d x d \theta.$$
+This is easy to show directly (which we will do first), but to fully understand the point of the exercise, we need to connect this with the notion of frequentist coverage (which we will do afterward).
+
+To show what was asked:
+\begin{align*}
+\Pr(\theta \in C(X)) &= \int \1(\theta \in C(x)) p(x | \theta) p(\theta) d x d \theta \\
+&= \int \1(\theta \in C(x)) p(\theta | x) p(x) d x d \theta\\
+&= \int \left( \int \1(\theta \in C(x)) p(\theta | x) d \theta\right) p(x) d x\\
+&= \int 0.5 p(x) d x  = 0.5.
+\end{align*}
+To be precise, these integrals should be restricted to the set of $x$'s such that $p(x) >0$.
+
+Now, what does this mean in terms of frequentist coverage? Recall that for any given $\theta_0$, the frequentist coverage of $C(x)$ is
+$$ c_{\theta_0} = \Pr(\theta_0 \in C(X) \mid \theta_0)
+ = \int \1(\theta_0 \in C(x)) p(x | \theta_0) d x, $$
+where $X \sim P_{\theta_0}$ (i.e., $X\sim p(x|\theta_0)$. In other words, if the model is correctly specified, such that the true distribution $P_0$ is $P_{\theta_0}$ for some $\theta_0$, then $100 c_{\theta_0} \%$ of the time, $C(X)$ will contain the true value $\theta_0$. The property we showed above doesn't give us any guarantee on the frequentist coverage for any given $\theta_0$, but it does guarantee that IF $\theta_0$ were drawn from the prior, then the mean coverage would be 0.5, in other words, $\int c_{\theta} p(\theta) d \theta = 0.5$. It's important to note that this depends heavily on the assumption that the model is correctly specified, since if, for example, $X\sim Q_{\theta_0}$ for some $Q_{\theta_0}\neq P_{\theta_0}$, then typically, this result will not hold.
+
+
+
+
+
+
+
+
+\end{document}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

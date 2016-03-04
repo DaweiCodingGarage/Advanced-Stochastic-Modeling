@@ -1,0 +1,174 @@
+\documentclass[12pt]{article} 
+% Formatting
+\tolerance=1000
+\usepackage[margin=1.2in]{geometry}
+
+\input{custom.tex}
+
+
+% Packages
+
+% \usepackage{amssymb,latexsym}
+\usepackage{amssymb,amsfonts,amsmath,latexsym,amsthm}
+\usepackage[usenames,dvipsnames]{color}
+\usepackage[]{graphicx}
+\usepackage[space]{grffile}
+\usepackage{mathrsfs}   % fancy math font
+% \usepackage[font=small,skip=0pt]{caption}
+\usepackage[skip=0pt]{caption}
+\usepackage{subcaption}
+\usepackage{verbatim}
+\usepackage{url}
+\usepackage{bm}
+\usepackage{dsfont}
+\usepackage{extarrows}
+\usepackage{multirow}
+% \usepackage{wrapfig}
+% \usepackage{epstopdf}
+\usepackage{rotating}
+\usepackage{tikz}
+\usetikzlibrary{fit}					% fitting shapes to coordinates
+%\usetikzlibrary{backgrounds}	% drawing the background after the foreground
+
+
+% \usepackage[dvipdfm,colorlinks,citecolor=blue,linkcolor=blue,urlcolor=blue]{hyperref}
+\usepackage[colorlinks,citecolor=blue,linkcolor=blue,urlcolor=blue]{hyperref}
+%\usepackage{hyperref}
+\usepackage[authoryear,round]{natbib}
+
+
+
+\title{Notes on graphical models
+}
+\author{Jeff Miller}
+%\date{\today}
+
+
+\begin{document}
+\maketitle
+
+\tableofcontents
+%\newpage
+
+\vspace{2em}
+
+Graphical models are a way of visually representing conditional independence properties among random variables. They are a useful tool for communicating and understanding the relationships between variables in a model, for deriving conditional independence properties of a model, and for developing inference algorithms. (Ideally, these notes would be accompanied by diagrams of graphical models, however, these notes will simply contain the mathematical descriptions. You will need to refer to PRML 8 or Murphy chapter 19 for examples and visualizations of graphical models themselves.)
+
+\section{Introduction}
+
+\begin{itemize}
+\item We will consider two types of graphical models: directed graphical models (DGMs) and undirected graphical models (UGMs).
+\item Directed graphical models are sometimes also called Bayesian networks (although sometimes this has a slightly different meaning).
+\item Undirected graphical models are sometimes also called Markov random fields (MRFs).
+\item I'm not a big fan of any of these names, since they are all misleading in some way. First of all, it is important to note that a DGM or UGM does not completely specify a model, but rather, a set of conditional independence properties. There is a whole class of potential models corresponding to any given ``graphical model''. Also, there is nothing necessarily Bayesian about graphical models.
+\item Better names would be ``directed factorization graphs'' and ``undirected factorization graphs'' (but these are not standard terms, so if you use them, you will need to clarify what you're talking about).
+\item It is also worth noting that a graphical model is purely a conceptual device---mathematically speaking, the graphical model doesn't give you anything more than what you could do by just applying the rules of probability to the assumed model distribution.
+\end{itemize}
+
+\section{Directed graphical models}
+
+\begin{itemize}
+\item Directed graphical models (DGMs) arise naturally in the context of Bayesian models, particularly hierarchical models and time series.
+\item A \textit{directed graph} is a graph in which all the edges are directed (i.e., have ``arrow heads'').
+\item A \textit{directed acyclic graph (DAG)} is a directed graph in which there are no ``cycles'', i.e., there is no way to start at one vertex, follow a sequence of edges in the directions that they point, and end up back at the same vertex.
+\item The set of \textit{parents of vertex $i$}, denoted $\mathrm{pa}(i)$, is the set of vertices $j$ such that there is a directed edge from $j$ to $i$.
+\item Suppose $p(x_1,\ldots,x_n)$ is a probability distribution, and $G$ is a DAG with vertices $1,\ldots,n$. We say that $p$ \textit{respects} $G$ if
+$$ p(x_1,\ldots,x_n) = \prod_{i = 1}^n p(x_i | x_{\text{pa}(i)}). $$
+\item Please see the textbook for examples.
+\end{itemize}
+
+\section{Undirected graphical models}
+
+\begin{itemize}
+\item Undirected graphical models (UGMs) arise naturally in physics, image analysis, spatial statistics, and biochemistry, for example. UGMs are often useful when there are a number of interacting variables that do not necessarily have a natural ordering in their dependencies.
+\item An \textit{undirected graph} is a graph in which all of the edges are undirected (i.e., have no ``arrow heads'').
+\item A \textit{clique} is a subset of vertices that is fully connected, i.e., there is an edge between every pair of vertices in the subset. Denote the set of all cliques by $\C$.
+\item A \textit{maximal clique} is a clique that is not contained in any other clique (i.e., adding any vertex would make it no longer clique). Denote the set of maximal cliques by $\C_m$.
+\item Suppose $p(x_1,\ldots,x_n)$ is a probability distribution, and $G$ is an undirected graph with vertices $1,\ldots,n$. We say that $p$ \textit{respects} $G$ if
+$$ p(x_1,\ldots,x_n) = \prod_{C \in \C_m} \varphi_C(x_C) $$
+for some functions $\varphi_C(x_C) \geq 0$. Here, as usual, $x_C = (x_i:i \in C)$. Note that we use a subscript $C$ on each function $\varphi_C$ to indicate that a different function may be used for each clique.
+\item There are a couple of equivalent representations that are sometimes useful:
+\begin{enumerate}
+\item $p$ respects $G$ if and only if
+$$ p(x_1,\ldots,x_n) \propto \prod_{C \in \C_m} \tilde\varphi_C(x_C) $$
+for some functions $\tilde\varphi_C(x_C) \geq 0$.
+\item $p$ respects $G$ if and only if
+$$ p(x_1,\ldots,x_n) = \prod_{C \in \C} \psi_C(x_C) $$
+for some functions $\psi_C(x_C) \geq 0$. (Here, the product is over all cliques, not just maximal cliques.)
+\end{enumerate}
+\item Please see the textbook for examples.
+\end{itemize}
+
+
+\section{DGMs versus UGMs}
+
+\begin{itemize}
+\item It is natural to wonder whether there would be any disadvantage to always using directed graphical models rather than undirected, or vice versa. The answer is that sometimes DGMs are preferable, sometimes UGMs are preferable, and sometimes they are equivalent. 
+\item It's also important to note that neither DGMs nor UGMs are ``complete'', in the sense that there are some distributions whose conditional independence properties cannot be fully captured by either class.
+\item Sometimes a DGM and a UGM represent exactly the same set of conditional independence properties. For example, this is the case in a hidden Markov model:
+$$ p(z,x) = p(z_1) p(x_1 | z_1) \prod_{i = 2}^n p(z_i | z_{i -1}) p(x_i | z_i) $$
+if we consider the natural DGM and UGM corresponding to this factorization.
+\item Sometimes a DGM more fully captures the conditional independence properties of a distribution. For example, consider a typical normal model with independent priors on the mean and variance:
+\begin{align*}
+&\mu \sim\N(\mu_0,\sigma_0^2)\\
+& \sigma^2 \sim \mathrm{InverseGamma} (a,b)\\
+& X | \mu,\sigma^2 \sim \N(\mu, \sigma^2)
+\end{align*}
+where $\mu_0 \in \R$, $a,b,\sigma_0^2>0$.
+The natural DGM corresponding to this distribution is $\mu\rightarrow X \leftarrow \sigma^2$, and it turns out that this DGM captures all of the conditional independence properties of this distribution. On the other hand, there is no UGM that captures all of the conditional independence properties of this distribution.
+\item Sometimes a UGM more fully captures the conditional independence properties of a distribution. For example, consider a one-dimensional Ising model with periodic boundary:
+$$ p(x_1,\ldots,x_n) \propto \exp\big(\beta (x_1 x_2 + x_2 x_3+ \cdots + x_{n -1} x_n + x_n x_1) \big)\1(x_1,\ldots,x_n \in \{-1,1 \}), $$
+where $\beta>0$.
+The natural UGM corresponding to this distribution has edges between $i$ and $i+1$ for each $i=1,\ldots,{n -1}$, and an edge between $n$ and $1$. It turns out that this UGM captures all of the conditional independence properties of this model. On the other hand, there is no DGM that captures all of the conditional independence properties of this model.
+\item For more on this, see Murphy chapter 19.
+\end{itemize}
+
+
+\section{Conditional independence criteria}
+
+\subsection{Undirected graphical models}
+\begin{itemize}
+\item Separation criterion for undirected graphical models: Suppose $p(x_1,\ldots,x_n)$ respects an undirected graph $G$. Let $A,B,C$ be disjoint subsets of vertices of $G$. If all paths from $A$ to $B$ are blocked by $C$ (i.e., if every path from a vertex of $A$ to a vertex of $B$ passes through a vertex of $C$), then $p(x_A,x_B |x_C)= p(x_A | x_C) p(x_B | x_C)$ (i.e., $X_A \perp X_B \mid X_C$).
+\item Meanwhile, if there is a path from $A$ to $B$ that is not blocked by $C$, then we cannot determine, from $G$ alone, whether or not $X_A \perp X_B \mid X_C$.
+\end{itemize}
+
+\subsection{Directed graphical models}
+\begin{itemize}
+\item Suppose $G$ is a DAG. The \textit{moralization of} $G$ (a.k.a. the moral graph, or the moralized graph) is obtained by connecting all pairs of parents of each vertex, and then converting all directed edges to undirected edges.
+\item Suppose $G$ is a DAG. The \textit{set of ancestors}  of a subset of vertices $S$ is the set of all vertices $i$ for which there is a directed path from $i$ to a vertex of $S$. By convention, the vertices of $S$ are included in the set of ancestors of $S$.
+\item The \textit{subgraph of ancestors of} $S$ is the DAG obtained by removing all non-ancestors and their edges.
+\item Moral ancestral separation criterion for directed graphical models: Suppose $p(x_1,\ldots,x_n)$ respects a DAG $G$. Let $A,B,C$ be disjoint subsets of vertices of $G$. Let $G_\text{MA}$ be the moralization of the subgraph of ancestors of $S = A \cup B \cup C$. If all paths in $G_\text{MA}$ from $A$ to $B$ are blocked by $C$, then $X_A \perp X_B \mid X_C$.
+\item Meanwhile, if there is a path  in $G_\text{MA}$ from $A$ to $B$ that is not blocked by $C$, then we cannot determine, from $G$ alone, whether or not $X_A \perp X_B \mid X_C$.
+\end{itemize}
+
+
+
+
+
+
+\end{document}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

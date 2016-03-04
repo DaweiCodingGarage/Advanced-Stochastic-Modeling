@@ -1,0 +1,284 @@
+\documentclass[12pt]{article} 
+% Formatting
+\tolerance=1000
+\usepackage[margin=1.2in]{geometry}
+
+\newcommand{\II}{\mathbb{I}}
+
+\input{custom.tex}
+\newcommand{\rep}{\text{rep}}
+
+% Packages
+
+% \usepackage{amssymb,latexsym}
+\usepackage{amssymb,amsfonts,amsmath,latexsym,amsthm}
+\usepackage[usenames,dvipsnames]{color}
+\usepackage[]{graphicx}
+\usepackage[space]{grffile}
+\usepackage{mathrsfs}   % fancy math font
+% \usepackage[font=small,skip=0pt]{caption}
+\usepackage[skip=0pt]{caption}
+\usepackage{subcaption}
+\usepackage{verbatim}
+\usepackage{url}
+\usepackage{bm}
+\usepackage{dsfont}
+\usepackage{extarrows}
+\usepackage{multirow}
+% \usepackage{wrapfig}
+% \usepackage{epstopdf}
+\usepackage{rotating}
+\usepackage{tikz}
+\usetikzlibrary{fit}					% fitting shapes to coordinates
+%\usetikzlibrary{backgrounds}	% drawing the background after the foreground
+
+
+% \usepackage[dvipdfm,colorlinks,citecolor=blue,linkcolor=blue,urlcolor=blue]{hyperref}
+\usepackage[colorlinks,citecolor=blue,linkcolor=blue,urlcolor=blue]{hyperref}
+%\usepackage{hyperref}
+\usepackage[authoryear,round]{natbib}
+
+
+
+\title{Notes accompanying BDA chapter 8\\
+\large Modeling accounting for data collection
+}
+\author{Jeff Miller}
+%\date{\today}
+
+
+\begin{document}
+\maketitle
+
+\tableofcontents
+%\newpage
+
+\vspace{2em}
+
+Many times, the construction of a data set involves some selection or collection process governing which samples we see. In many cases, we don't need to model this data collection process (it is ``ignorable''), but sometimes there are biases in the data collection process that are important to account for. Recognizing when such issues arise, and properly accounting for them, is probably one of the more subtle aspects of using statistics  in practice.
+
+\section{Introduction}
+
+
+\subsection{A few motivating examples}
+\begin{itemize}
+\item The local city government installed traffic cameras at the intersections that had the highest number of accidents in the previous year. This year, they noticed that the number of accidents at those intersections was lower, on average, compared to the previous year. Is this evidence that installing traffic cameras helps decrease the number of accidents? Not necessarily! The issue is that the number of accidents in any given year will exhibit some randomness, and by choosing intersections with a high number of accidents, we will tend to choose intersections that had higher numbers of accidents than their individual means. So, in fact, we would expect the number of accidents at those intersections to be less this year, even if the cameras were not there. Basically, there is a selection bias in how the intersections were chosen.
+
+\item For several years, observational studies suggested that women receiving hormone therapy have a lower risk of cardiovascular disease. However, this was more recently contradicted by randomized controlled trials, which suggested that in fact, the risk of cardiovascular disease was significantly increased. How could this happen?  (By the way, in lecture I mistakenly said ``human growth hormone'' instead of ``hormone therapy'', which is different.) One possibility is that the observational studies did not properly account for all of the relevant ``confounders'' --- for example, wealthier women are more likely to have hormone therapy, but they are also more likely to have a healthier lifestyle. Another, more subtle, possible explanation (Hernan et al., Epidemiology, 2008) is that it appears that the observational studies compared women who were currently receiving hormone therapy to women who had never received hormone therapy---however, this is missing is the subset of women who started taking hormone therapy and then stopped taking it before the observations were made (possibly even due to death). The underlying reason for both of these possible explanations is failure to correctly model the data collection process.
+
+\item During World War II, the US military found that the bomber planes returning from missions were being struck by bullets in certain parts of the plane more than other parts. They were planning to provide armor to protect these frequently-struck parts of the planes, however, statistician Abraham Wald was consulting for the military, and he realized that this was precisely the opposite of what they should do. Why? The key insight was that their observations were based on the planes that \textit{returned} from their missions---they were not considering all of the planes that were shot down! He performed a careful statistical analysis and recommended that they reinforce the planes in the parts where bullet holes had not been observed. Basically, the idea is that these were critical regions, and the reason the observed planes returned was that they were not struck there.
+\end{itemize}
+
+
+
+
+\subsection{Discussion}
+
+The basic point of this chapter is that sometimes, we need to model the biases in how the data were collected. A canonical case of this is handling missing data---in other words, handling the possibility that some potential samples were not included in the data set. It is important to realize that missing data can contain information about the parameters you are interested in, and ignoring it can bias your results. In some lucky cases we can ignore the data collection process---we will study this property, called ``ignorability'', and establish some sufficient conditions under which it holds. When ignorability does not hold, the good news is that if we model the data collection process correctly, we can just use standard Bayesian methods to perform inference.
+
+
+\section{Of airplanes and bullet holes}
+
+\begin{itemize}
+\item
+To introduce some of the basic concepts and notation, let's consider a simplification of the Wald story. 
+\item Suppose we want to know the mean number of bullet holes occurring in planes during a mission. 
+\item Denote
+\begin{align*}
+y_j & = \text{\# of bullet holes in plane $j$} \\
+I_j & = \1(\text{plane $j$ returned from its mission})\\
+\text{obs} & = \{j:I_j = 1 \}= \text{the set of indices of the observed values}\\
+\text{mis} & = \{j:I_j = 0\}= \text{the set of indices of the missing values}.
+\end{align*}
+\item Let's assume the following model:
+\begin{align*}
+Y_1,\ldots,Y_n | \theta \text{ i.i.d.} \sim \Poisson(\theta)\\
+I_j | y,\theta \sim \Bernoulli(\phi_{y_j}),
+\end{align*}
+and for simplicity, let's assume the parameters $\phi_0, \phi_1,\ldots$ are known, and are  strictly decreasing in size.
+\item Then
+$$ p(y,I | \theta) = \prod_{j = 1}^n p(y_j | \theta) p(I_j | y_j) = p(y_{\text{obs}} | \theta) \Big(\prod_{j \in\text{obs}}\phi_{y_j} \Big)
+\Big(\prod_{j \in\text{mis}}p(y_j | \theta) (1 -\phi_{y_j}) \Big). $$
+\item It would be incorrect to use $p(\theta | y_{\text{obs}})$ for posterior inferences about $\theta$, since this would not take into account the bias in the data collection process due to the fact that planes with more bullet holes are less likely to return.
+\item Instead,  the correct distribution to use is
+\begin{align*}
+p(\theta | y_{\text{obs}},I) & \propto p(y_{\text{obs}},I | \theta) p(\theta)= p(\theta) \sum_{y_{\text{mis}}} p(y,I | \theta)\\
+& =p(\theta) p(y_\text{obs} | \theta)\Big(\prod_{j \in\text{obs}}\phi_{y_j} \Big)\sum_{y_\text{mis}}
+\Big(\prod_{j \in\text{mis}}p(y_j | \theta) (1 -\phi_{y_j}) \Big)\\
+& \propto p(\theta) p(y_\text{obs} | \theta) 
+\prod_{j \in\text{mis}}\sum_{y_j}p(y_j | \theta) (1 -\phi_{y_j})\\
+& =p(\theta) p(y_\text{obs} | \theta) \Pr(I_1 = 0 \mid \theta)^{| \text{mis} |}.
+\end{align*}
+where the sum $\sum_{y_\text{mis}}$ is overall possible values of the vector $y_{\text{mis}} = (y_j:j \in \text{mis})$.
+\item Note that (in this example) the correct posterior is proportional to the naive  incorrect posterior $p(\theta | y_\text{obs})$ times the factor $ \Pr(I_1 = 0 \mid \theta)^{| \text{mis} |}$ accounting for the missing data.
+\end{itemize}
+
+\subsection{Ignorability}
+\begin{itemize}
+\item This example (airplanes and bullet holes) is one in which the data collection process is not ``ignorable''. On the other hand, if it were the case that $\phi_0 = \phi_1 = \cdots = c$ for some constant $c \in (0,1)$, then 
+$I \perp (Y,\theta)$,
+and it turns out that when this is so, the data collection process is ``ignorable'' in the sense that $p(\theta | y_\text{obs},I) = p(\theta | y_\text{obs})$. Actually, this is easy to see in this example since if $\phi_0 = \phi_1 = \cdots = c$ then $\Pr(I_1 = 0 \mid \theta)^{|\text{mis} |} = (1 - c)^{|\text{mis} |} \propto_\theta 1$.
+\item More generally, the parameters $\phi_0,\phi_1,\ldots$ might be unknown, in which case we would put a prior on them. Also, we might have covariates $x_j$ associated with plane $j$. In this more general setting, the appropriate distribution to use for inferences about $\theta$ is
+$$ p(\theta \mid x,y_\text{obs},I) = \int p(\theta,\phi \mid x,y_\text{obs},I) d \phi. $$
+\item In general, the data collection process is said to be \textit{ignorable} if
+$$ p(\theta \mid x,y_\text{obs},I) = p(\theta \mid x,y_\text{obs}). $$
+\item Some care is needed to properly interpret the quantity on the right-hand side of this equation, since the convention of using the same letter for both a random variable and its value makes this expression ambiguous. The short explanation is that the right-hand side should be interpreted formally as
+$$ p(\theta | x,y_\text{obs}) \propto p(y_\text{obs} | x,\theta) p(\theta | x). $$
+This might seem obvious, but consider the following thought process: ``if I know the observed values $y_\text{obs}$, then I must know which subset of variables I observed, so conditioning on $y_\text{obs}$ should be the same as conditioning on both $y_\text{obs}$ and $I$.'' To clear up the confusion, we need to make the notation a little more precise. Let $\II$ denote the random variable taking values $I$, and write $y_I$ instead of $y_\text{obs}$ to denote the values of the observed variables. The reason why the thought process above is invalid is that the expression $p(\theta \mid x,y_\text{obs})$ should be interpreted as
+$$ p(\theta \mid x,y_\text{obs}) = p(\theta \mid x,\, Y_I=y_I), $$
+and \textit{not} $p(\theta \mid x,\, Y_\II=y_I)$, which \textit{would} be equal to $p(\theta \mid x,\, Y_\II=y_I,\II=I) = p(\theta \mid x,y_\text{obs},I)$.
+\item To further understand the distinction, here's a simple example.  Suppose your model is $Y_1,Y_2|\theta \text{ i.i.d.}\sim N(\theta,1)$ and you have a prior on $\theta$. Consider the following two scenarios:
+\begin{enumerate}
+\item[(a)] I tell you that $y_1 = 2.4$. What is your posterior on $\theta$?
+\item[(b)] I tell you that $y_1 = 2.4$ and $y_1 < y_2$. What is your posterior on $\theta$?
+\end{enumerate}
+It should be clear that these two scenarios lead to different posteriors for $\theta$. Now, to make the connection with $y_\text{obs}$ and $I$, suppose $p(I|y,\theta)$ is such that $I_1=1,I_2=0$ whenever $y_1 < y_2$, and otherwise, $I_1=0,I_2=1$. When $y_1 < y_2$, scenario (a) above corresponds to using $p(\theta | y_\text{obs})$, and scenario (b) corresponds to using $p(\theta | y_\text{obs}, I)$. The difference is that in scenario (a), I didn't tell you why you were only seeing $y_1$.
+\end{itemize}
+
+
+
+\section{Medical treatment example}
+
+\begin{itemize}
+\item Before considering the general setup and establishing some general conditions under which ignorability is guaranteed, let's look at another example. 
+\item Suppose a doctor has $n$ patients with some disease, and each patient is given one of two treatments, A or B. 
+\item Denote by $y$ the matrix of ``potential outcomes'',
+$$ y = \begin{bmatrix} y_1^\text{A} &  y_1^\text{B} \\
+y_2^\text{A} &  y_2^\text{B} \\
+\vdots & \vdots \\
+y_n^\text{A} &  y_n^\text{B}
+\end{bmatrix} $$
+where $y_j^T$ denotes the outcome patient $j$ would exhibit if given treatment $T$.
+\item Likewise, denote by $I$ the matrix of observation indicators,
+$$ I = \begin{bmatrix} I_1^\text{A} &  I_1^\text{B} \\
+\vdots & \vdots \\
+I_n^\text{A} &  I_n^\text{B}
+\end{bmatrix} $$
+where $I_j^T= \1(\text{patient $j$ is given treatment $T$})$. It is assumed that each patient is given exactly one treatment, A or B; in other words, $I_j^\text{B} = 1 -I_j^\text{A}$.
+\item Suppose we have a vector of covariates $x_j = (x_{j 1},\ldots,x_{j d})^\T \in \R^d$ for patient $j$.
+\item Consider the following simple model for $y$ and $I$:
+\begin{align*}
+Y_j^\text{A} | x,\theta &\sim \N(\theta_\text{A} + \beta^\T x_j,\, \sigma^2)\\
+Y_j^\text{B} | x,\theta  &\sim \N(\theta_\text{B} + \beta^\T x_j,\, \sigma^2)\\
+I_j^\text{A} | x,y,\phi &\sim \Bernoulli(\logit^{-1}(\phi^\T x_j))
+\end{align*}
+where $\theta = (\theta_\text{A},\theta_\text{B})^\T \in \R^2$ and $\phi = (\phi_1,\ldots,\phi_d)^\T\in \R^d$. Assume a prior $p(\theta,\phi | x)$ on these parameters.
+For simplicity, let's assume that the  vector of regression coefficients $\beta$ and the variance $\sigma^2$ are known, but of course more generally we could put priors on them.
+\item We will revisit this example to illustrate various concepts.
+\end{itemize}
+
+
+\section{General framework}
+
+\subsection{Setup}
+
+\begin{itemize}
+\item The framework described here is used in a large number of situations, including models for missing data, censored data, surveys/polls, randomized experiments, and causal inference.
+\item Let $y$ denote a matrix of ``potential outcomes'' $y_{i j}$, some of which will be observed, and some of which will not be observed.
+\item Let $I_{i j} = \1(\text{entry $i,j$ of $y$ is observed})$.
+\item Let $\text{obs}= \{(i,j):I_{i j} = 1 \}$ and $\text{mis}= \{(i,j):I_{i j} = 0 \}$.
+\item Let $x$ denote some accompanying collection of covariates.
+\item Let $\theta$ denote parameters governing the distribution of the potential outcomes $y$, and let $\phi$ denote parameters governing the distribution of the data collection process $I$.
+\item Typically, we get to see $x$, $y_\text{obs}$, and $I$ (but not $y_\text{mis}$).
+\item Assume the following factorization holds:
+$$ p(y,I | x,\theta,\phi) = p(y | x,\theta) p(I | x,y,\phi). $$
+This is referred to as the \textit{complete-data likelihood}.
+\end{itemize}
+
+\subsection{Basic properties}
+\begin{itemize}
+\item The joint posterior on $(\theta,\phi)$ is then
+\begin{align*}
+p(\theta,\phi | x,y_\text{obs},I) & \propto p(\theta,\phi | x) p(y_\text{obs},I | x,\theta,\phi)\\
+& = p(\theta,\phi | x) \int p(y,I | x,\theta,\phi) d y_\text{mis}\\
+&= p(\theta | x) p(\phi | x,\theta) \int p(y | x,\theta) p(I | x,y,\phi) d y_\text{mis}.
+\end{align*}
+Note that here we are assuming the $y$'s are continuous, but of course if they were discrete, the integral above would be replaced by a sum. Also, the proportionality here is with respect to both $\theta$ and $\phi$.
+\item The posterior on $\theta$ is then obtained by just integrating this over $\phi$, i.e.,
+\begin{align} \label{equation:posterior}
+p(\theta | x,y_\text{obs},I) & = \int p(\theta,\phi | x,y_\text{obs},I) d \phi\notag\\
+& \propto_\theta \,p(\theta | x) \int p(\phi | x,\theta) \left(\int p(y | x,\theta) p(I | x,y,\phi) d y_\text{mis} \right) d\phi.
+\end{align}
+\end{itemize}
+
+\subsection{Ignorability and related concepts}
+
+\begin{itemize}
+\item We say that \textit{ignorability} holds if $$p(\theta | x,y_\text{obs},I) = p(\theta | x,y_\text{obs}). $$
+\item When ignorability holds, we don't have to worry about modeling the data collection process. This makes life easier, and also makes our inferences more robust (since there are fewer modeling assumptions to possibly get wrong).
+\item Note that ignorability, as defined here, is a property of the assumed model---but of course your model might not actually be a good representation of the true distribution. If you assume a model in which ignorability holds, but the assumptions underlying your model are invalid, then obviously your resulting inferences will be compromised. In some cases, fortunately, the true data collection process is directly under our control (for example, in randomized controlled trials), so we can guarantee that it has a particular distribution---and thus, in such cases we can be confident that our model for the data collection process is correct.
+\item We say that data is \textit{missing at random} (MAR) if 
+$$ p(I | x,y,\phi) = p(I | x,y_\text{obs},\phi). $$
+\item We say that data is \textit{missing completely at random} (MCAR) if 
+$$ p(I | x,y,\phi) = p(I | x,\phi). $$
+\item We say that \textit{strong ignorability} holds if 
+$$ p(I | x,y,\phi) = p(I | x). $$
+\item We say that the condition of \textit{distinct parameters} holds if $$p(\theta,\phi | x) = p(\theta | x) p(\phi | x). $$ (This terminology is really bad, but unfortunately it seems to be standard.)
+\item  Based on these definitions, we can derive the following results:
+\begin{align*}
+& \text{strong ignorability} \Longrightarrow \text{MCAR} \Longrightarrow \text{MAR}\\
+& \text{strong ignorability} \Longrightarrow \text{ignorability}\\
+& \text{MAR} + \text{distinct parameters} \Longrightarrow \text{ignorability}.
+\end{align*}
+The first line can be seen directly from the definitions (if this is not obvious to you, review conditional independence). The second and third lines can be derived by plugging the definitions into equation \ref{equation:posterior}.
+\end{itemize}
+
+\section{Medical treatment example, revisited}
+
+\begin{itemize}
+\item Here we illustrate the concepts above in the context of this example.
+\item In the original setup for this example, the data collection process was modeled as
+$$ I_j^\text{A} | x,y,\phi \sim \Bernoulli(\logit^{-1}(\phi^\T x_j)) $$
+independently for $j = 1,\ldots,n$. This satisfies MCAR.
+\item If $\phi$ were known exactly, a priori, then we would also have strong ignorability. But if $\phi$ is unknown and we need to put a prior on it, then strong ignorability does not hold and we only have MCAR.
+\item To illustrate a situation in which MAR holds, but MCAR does not hold, suppose the treatment of patient $j$ is adaptively chosen based on the observed outcomes of patients $1,\ldots,j-1$, in addition to $x$ and $\phi$. This would be the case if the doctor adjusts her treatment decisions based on what she has learned from previous patients. In this case, MAR holds, but not MCAR.
+\item If $\theta$ and $\phi$ are independent in the prior (given $x$), then we have ``distinct parameters''. However, assuming such independence might not be reasonable in this example, since if $\theta_\text{B} - \theta_\text{A}$ is large then it is plausible that the doctor would have domain knowledge indicating this (perhaps from her background knowledge or from the medical literature), and so the doctor would be more likely to assign one treatment over the other (and thus $\phi$ would depend on $\theta$). 
+\end{itemize}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\end{document}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

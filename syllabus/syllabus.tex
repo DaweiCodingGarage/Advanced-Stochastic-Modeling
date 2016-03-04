@@ -1,0 +1,299 @@
+\documentclass[12pt]{article} 
+% Formatting
+\tolerance=1000
+\usepackage[margin=1in]{geometry}
+
+
+% Packages
+
+% \usepackage{amssymb,latexsym}
+\usepackage{amssymb,amsfonts,amsmath,latexsym,amsthm}
+\usepackage[usenames,dvipsnames]{color}
+\usepackage[]{graphicx}
+\usepackage[space]{grffile}
+\usepackage{mathrsfs}   % fancy math font
+% \usepackage[font=small,skip=0pt]{caption}
+\usepackage[skip=0pt]{caption}
+\usepackage{subcaption}
+\usepackage{verbatim}
+\usepackage{url}
+\usepackage{bm}
+\usepackage{dsfont}
+\usepackage{extarrows}
+\usepackage{multirow}
+% \usepackage{wrapfig}
+% \usepackage{epstopdf}
+\usepackage{rotating}
+\usepackage{tikz}
+\usetikzlibrary{fit}					% fitting shapes to coordinates
+%\usetikzlibrary{backgrounds}	% drawing the background after the foreground
+
+
+% \usepackage[dvipdfm,colorlinks,citecolor=blue,linkcolor=blue,urlcolor=blue]{hyperref}
+\usepackage[colorlinks,citecolor=blue,linkcolor=blue,urlcolor=blue]{hyperref}
+%\usepackage{hyperref}
+\usepackage[authoryear,round]{natbib}
+
+
+
+\title{Syllabus for STA531\\
+\large Advanced Stochastic Modeling\\
+Spring 2016, Duke University
+}
+\author{}
+\date{}
+
+
+\begin{document}
+\maketitle
+
+\section{General information}
+\begin{itemize}
+\item[] Lectures: Tuesdays and Thursdays, 11:45 AM -- 1:00 PM, Biological Sciences 130
+\item[] Course website: \url{https://sakai.duke.edu}
+    %\begin{itemize}
+        %\item General information: \url{https://stat.duke.edu/~jwm40/ASM/}
+        %\item Grading: \url{https://sakai.duke.edu}
+    %\end{itemize}
+\item[] Textbooks:
+    \begin{itemize}
+        \item (BDA) \textit{Bayesian Data Analysis, Third Edition}, by Gelman, Carlin, Stern, Dunson, Vehtari, \& Rubin, 2014, CRC Press.
+        \item (PRML) \textit{Pattern Recognition and Machine Learning}, by Christopher M. Bishop, 2006, Springer.
+    \end{itemize}
+\end{itemize}
+
+\subsubsection*{Primary instructor}
+\begin{quote}
+Jeff Miller \\
+Office hours: Mondays, 1:15--3:15 PM, Old Chem 025 \\
+Email address: jeff.miller@duke.edu \\
+Website: \url{https://stat.duke.edu/~jwm40/}
+%Campus address: 214 Old Chemistry, Box 90251
+\end{quote}
+
+
+\subsubsection*{Teaching assistants}
+
+\begin{quote}
+Ken McAlinn \\
+Office hours: Tuesdays, 4:30--6:30 PM, Old Chem 025 \\
+Email address:	kenmcalinn@gmail.com
+\end{quote}
+
+\begin{quote}
+Xinyi Li \\
+Office hours: Wednesdays, 4:30--6:30 PM, Old Chem 025 \\
+Email address: xinyi.li@duke.edu
+\end{quote}
+
+\newpage
+
+\section{Outline of topics}
+
+%The course is designed to provide in-depth coverage of essential core topics, as well as a high-level overview of a wide range of other topics. 
+From previous courses, you should already be familiar with the material from BDA chapters 1, 2, 3, 5, 11, and 14.
+Here is a list of what we plan to cover.
+
+\begin{itemize}
+    \item BDA 4, 6, 8 (Fundamentals)
+    \item PRML 8 (Graphical models)
+    \item BDA 10, 12, 13 (Inference)
+    \item BDA 16, 17 (Linear models)
+    \item BDA 19--22 (Nonlinear and nonparametric models)
+    \item PRML 13 (Sequential data)
+    \item If time permits: PRML 5 (Neural nets)
+    \item If time permits: BDA 23 (Dirichlet process models)
+\end{itemize}
+
+
+\section{Schedule / Important dates}
+
+\subsubsection*{Key dates:}
+\begin{quote}
+Midterm exam \#1: Tuesday, Feb 16, at the usual class time and location. \\
+Midterm exam \#2: Thursday, Mar 24, at the usual class time and location. \\
+Final exam: Friday, May 6, 2:00--5:00 PM
+\end{quote}
+
+There will be no make-up exams, so please make sure you are free on these dates. If you absolutely must miss a midterm due to extraordinary circumstances, the weight given to your final exam will increase accordingly, so that you have the opportunity to make up the points.
+
+\subsubsection*{Class will be held on the following dates:}
+\begin{quote}
+Jan 14, 19, 21, 26, 28 \\
+Feb 2, 4, 9, 11, 16 (midterm 1), 18, 23, 25 \\
+Mar 1, 3, 8, 10, 22, 24 (midterm 2), 29, 31 \\
+Apr 5, 7, 12, 14, 19 \\
+~\\
+Apr 21 and 26: Optional review sessions, at the usual class time and location.
+\end{quote}
+
+
+\section{Grades}
+
+Your overall score for the course will be determined by:
+\begin{quote}
+45\% Homework \\
+15\% Midterm 1 \\
+15\% Midterm 2 \\
+20\% Final \\
+5\% Class participation.
+\end{quote}
+
+\iffalse
+An overall score of $s$ will result in a grade of:
+\begin{quote}
+A if $90\leq s\leq 100$ \\
+B if $75\leq s < 90$ \\
+C if $60\leq s < 75$ \\
+D if $50\leq s < 60$ \\
+F if $0\leq s < 50$
+\end{quote}
+or, for those taking the course on a Satisfactory/Unsatisfactory basis:
+\begin{quote}
+S if $60\leq s\leq 100$ \\
+U if $0\leq s < 60$.
+\end{quote}
+For graduate students, it appears that there is no ``D'' grade (only A, B, C, or F)---consequently, in this case anything between $0$ and $60$ is an F. 
+
+Note: If for some reason the scores are all significantly lower than expected, these ranges will be adjusted to something reasonable.
+\fi
+
+%\subsubsection*{Midterm grades}
+%After the midterm exam, you will be given a midterm grade assessing your overall performance so far. If you are an undergraduate, this will also be sent to the registrar. This does not go on your transcript. The main purpose of this is to let you know how you are doing in the class.
+
+%\subsubsection*{Cumulative final}
+%The final exam will cover material from the whole semester.
+
+%\subsubsection*{Policy on grade changes after the end of the semester}
+%From the faculty handbook:
+
+%\begin{quote}\it \small
+%It is important to note that with the exception of I [Incomplete Work] grades and X [Absence from Final Examination] grades, changes in grades may be made by the instructor only because of an error in calculation or an error in transcription. Changes in grades may not be based on the late submission of required work, the resubmission of work previously judged unsatisfactory, or on additional 
+%work. No changes may be made in a grade after the end of the semester following the one for which the grade was 
+%assigned, although cases of error discovered after the deadline may be appealed by the student or the instructor to 
+%the Office of the Provost. 
+%\end{quote}
+
+
+\section{Homework}
+
+Homework will be assigned regularly.
+Submit your homework electronically {\bf in PDF form} via the course website. 
+
+\begin{itemize}
+    \item Mathematical exercises: Your solutions to mathematical exercises can be typed or handwritten, but must be clear and legible, otherwise no credit can be given. To electronify handwritten solutions, there are scanners available in the library, or you can use a smart phone (there are scanner apps to handle multiple pages), HOWEVER, if you use a phone, make sure your writing is clearly readable in the PDF. 
+        
+    \item Programming exercises: For programming exercises, include (a) plots and numerical results when appropriate, (b) discussion of the results when appropriate, (c) any supporting derivations, written out separately from the code, and (d) your source code (typed). The TAs will not run your code (e.g., to generate plots, etc.), so anything you want them to see must be included separately from the code itself. You are free to use any programming language you choose.
+\end{itemize}
+
+The homework assignments will probably require a lot of computer programming. We will not be teaching you how to program---it is expected that you already know how.
+
+
+\subsubsection*{Grading}
+All homeworks (and exams as well) should typically be graded by the TAs within one week. If there is a delay beyond this, please inform me. Grades will be posted on the course website on Sakai. 
+If you have questions about your grade on a particular assignment, please try to resolve them with the TA who graded it before contacting me.
+
+
+\subsubsection*{Policy on late submissions}
+
+Late submissions within 24 hours after the deadline will receive partial credit as follows: Your score will be penalized by a multiplicative factor that decreases linearly from 1 to 0 as a function of time.  Work submitted later than 24 hours after the deadline will receive no credit.  If, for some reason, you experience technical difficulties posting your assignment to the website, email it to one of the TAs, and the timestamp of the email will be used (but this should only be done as a last resort). If you are unable to finish the assignment on-time, you should still submit whatever you have completed---partial credit is better than nothing.
+
+
+\subsubsection*{Policy on missed work due to extraordinary circumstances}
+
+In case of illness, personal emergencies, religious observation, varsity athletic participation, or other extraordinary circumstances, contact me (Jeff) as soon as possible, and if you are an undergraduate follow the guidelines here:
+\url{http://trinity.duke.edu/undergraduate/academic-policies/missing-work-classes}.
+If officially approved, you will have the opportunity to make up missed work due to such circumstances.
+Note that being busy is not an extraordinary circumstance.
+
+
+\subsubsection*{Policy on collaboration}
+
+You are free to discuss homework problems with other people, HOWEVER, when you sit down to work out and write up your solutions, you must do this by yourself, without referring to solutions (or any notes related to solutions) provided by anyone else. Each student must turn in her/his own solutions. Two or more names on one assignment is not acceptable.
+
+
+%\subsection{Labs}
+
+%Lab assignments will focus more on practice with hands-on implementation and programming. You are free to discuss and work together on lab assignments, however, each student must turn in her/his own work. Two or more names on one assignment is not acceptable.
+
+%There will be weekly lab sessions, in which the TA's will discuss and provide assistance with the lab assignments. Attendance at lab sessions is not mandatory, however, you are required to submit the lab assignments.
+
+
+%\section{Lectures and in-class exercises}
+
+%Lecture notes will be posted on the course website.  
+%Most lectures will start with a short exercise. This only counts toward class participation---if you are there and you do the exercise, you get full credit. (If you have to miss class for a good reason but you really want to make up the in-class exercise, e-mail me (Jeff) within 24 hours.)
+
+%The main point of these exercises is communication: We communicate to you what you will be expected to know, so you can gauge your level of understanding---meanwhile, you communicate to us what you are understanding and what you are struggling with.
+
+
+\section{Academic dishonesty}
+
+Duke University is a community dedicated to scholarship, leadership, and service and to the principles of honesty, fairness, respect, and accountability. Citizens of this community commit to reflect upon and uphold these principles in all academic and non-academic endeavors, and to protect and promote a culture of integrity. Cheating on exams and quizzes, plagiarism on homework assignments and projects, lying about an illness or absence and other forms of academic dishonesty are a breach of trust with classmates and faculty, violate the \href{https://gradschool.duke.edu/academics/academic-policies-and-forms/standards-conduct/duke-community-standard}{Duke Community Standard}, and will not be tolerated. Such incidences will result in a 0 grade for all parties involved as well as being reported to the \href{https://gradschool.duke.edu/academics/academic-policies-and-forms/standards-conduct/judicial-code-and-procedures}{University Judicial Board}. Additionally, there may be penalties to your final class grade. Please review \href{https://gradschool.duke.edu/academics/academic-policies-and-forms/standards-conduct}{Duke's Standards of Conduct}.
+
+\section{Students with disabilities}
+
+Students with disabilities who believe they may need accommodations in this class are encouraged to contact the \href{http://access.duke.edu/students/requesting/index.php}{Student Disability Access Office} at (919) 668-1267 as soon as possible to better ensure that such accommodations can be made.
+
+\iffalse
+
+\section{Supplementary references}
+
+If you would like to have further references in addition to the course textbook (always a good idea), the following are recommended. If you only get one of these, I would recommend Gelman et al., \textit{Bayesian Data Analysis}.
+
+\subsubsection*{Bayesian statistics}
+\begin{itemize}
+\item[] \textit{Bayesian Data Analysis}. Gelman, A., Carlin, J.B., Stern, H.S., Dunson, D.B., Vehtari, A., \& Rubin, D.B. (2013). CRC press.
+\item[] \textit{The Bayesian Choice: From Decision-Theoretic Foundations to Computational Implementation}. Robert, C. P. (2001). Springer Texts in Statistics.
+\item[] \textit{Statistical Decision Theory and Bayesian Analysis}. Berger, J.O. (1985). Springer.
+\end{itemize}
+
+\subsubsection*{Statistics in general}
+\begin{itemize}
+\item[] \textit{Statistical Inference (Vol. 2)}. Casella, G., \& Berger, R.L. (2002). Pacific Grove, CA: Duxbury.
+\item[] \textit{All of Statistics: A Concise Course in Statistical Inference}. Wasserman, L. (2004). Springer.
+\end{itemize}
+
+\subsubsection*{Probability}
+\begin{itemize}
+\item[] \textit{Probability and Random Processes}. Stirzaker, D. \& Grimmett, G. (2001). Oxford Science Publications.
+\end{itemize}
+
+\subsubsection*{Machine learning}
+\begin{itemize}
+\item[] \textit{Pattern Recognition and Machine Learning}. Bishop, C.M. (2006). New York: Springer.
+\end{itemize}
+
+\fi
+
+
+
+
+
+
+\end{document}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,98 @@
+\documentclass[12pt]{article} 
+\input{custom}
+\usepackage[margin=1in]{geometry}
+
+
+\begin{document}
+\begin{center}
+\large\textbf{STA531 Midterm Exam 1 Solutions}
+\end{center}
+
+\begin{enumerate}
+\item  Posterior consistency and asymptotic normality
+\begin{enumerate}
+\item The log likelihood is
+$$ \ell(\theta; x_{1:n}) = \log p(x_{1:n} | \theta) = \log \theta^n e^{- \theta \sum x_i} = n \log \theta - \theta \sum_{i = 1}^n x_i. $$
+The first and second derivatives are
+\begin{align*}
+& \frac{\partial}{\partial \theta} \ell = \frac{n}{\theta} - \sum_{i = 1}^n x_i\\
+& \frac{\partial^2}{\partial \theta^2} \ell = - \frac{n}{\theta^2} <0. 
+\end{align*}
+Since the second derivative is negative for all $\theta >0$, the function is strictly concave.
+So, setting the derivative equal to zero and solving tells us that the maximum likelihood estimator is $\hat \theta = 1/\bar x$.
+The observed information is
+$$ I(\theta; x_{1:n}) = - \frac{\partial^2}{\partial \theta^2} \ell = \frac{n}{\theta^2}. $$
+Therefore, the asymptotic normal approximation to the posterior is
+$$ \theta | x_{1:n} \approx \N(\hat\theta,I(\hat\theta; x_{1:n})^{-1}) = \N(1/\bar x,1/(n \bar x^2)). $$
+
+
+\item The (strong) law of large numbers tells us that with probability one (i.e., almost surely), $\bar x \to \E_{\theta_0} X = 1/\theta_0$ as $n \to \infty$. Therefore, $\hat\theta = 1/\bar x \to \theta_0$ and $1/(\sqrt n \bar x) \to 0$ (a.s.)\ as $n \to \infty$.
+In other words, the mean of the asymptotic normal approximation is converging to $\theta_0$, and the standard deviation of the asymptotic normal approximation is converging to zero. Hence, for any neighborhood of $\theta_0$, as $n$ grows, the amount of probability given to that neighborhood (by the normal approximation) will eventually go to one. 
+
+To make this argument formal (which was certainly not required), one would have to argue that (i) convergence of the standard deviation to zero implies the claimed result about the probability in a neighborhood going to one (this can be done using Chebyshev's inequality), and (ii) the normal approximation is good enough (this can be done by stating the approximation more precisely in terms of convergence with respect to the total variation distance).
+\end{enumerate}
+
+
+\item Posterior predictive checks
+\begin{enumerate}
+\item 
+$p(\theta | x) \propto p(x | \theta) p(\theta) \propto \N(x | \theta,1) = \N(\theta | x,1).$
+\item The posterior predictive is $p(x^\text{rep} | x) = \int p(x^\text{rep} | \theta) p(\theta | x) d \theta$. Therefore, we can sample $X^\text{rep} | x$ by first drawing $\theta | x \sim \N(x,1)$ and then drawing $X^\text{rep} | \theta \sim \N(\theta,1)$. In other words, we can sample $X^\text{rep} | x$ by drawing $Y,Z \sim \N(0,1)$ independently, and setting $X^\text{rep} = x + Y + Z$. Therefore, $X^\text{rep} | x \sim \N(x,2)$ by the formula for linear combinations of independent normal random variables.
+\item The posterior predictive p-value is
+$$ \Pr(T(X^\text{rep}) \geq T(x) \mid x) = \Pr(X^\text{rep} \geq x \mid x) = 1/2 $$
+by part (b) since $X^\text{rep} | x$ is normal with mean $x$.
+\end{enumerate}
+
+
+
+\item Modeling the data collection process
+\begin{enumerate}
+\item $p(\theta | x,y_\text{obs},I) = p(\theta | x,y_\text{obs}). $
+\item Here is one of many possible examples. Suppose $Y_1,\ldots,Y_n | \theta$ i.i.d. $\sim \Bernoulli(\theta)$, and given $y,\theta$, suppose $I_j =  Y_j$ for all $j = 1,\ldots,n$. Suppose there are no covariates $x$. Then the observed $y$'s are all ones, however, all of the $y$'s can be recovered perfectly from $I$. Consequently, $p(\theta | y_\text{obs})$ will concentrate at 1, but $p(\theta | y_\text{obs},I)$ will concentrate at the true value $\theta_0$.
+\end{enumerate}
+
+\item Credible intervals and frequentist coverage
+\begin{enumerate}
+\item First, note that since the function $f(x) =x^a$ is monotone increasing for any $a >0$, we have that (i) $\theta_0 \leq x^{0.1}$ if and only if $\theta_0^{1/0.1} \leq x$, and (ii) $x^{0.9} \leq \theta_0$ if and only if $x \leq \theta_0^{1/0.9}$. Therefore, the frequentist coverage probability is
+\begin{align*}
+\Pr(\theta_0 \in C(X) \mid \theta_0) &= \Pr(X^{0.9}\leq \theta_0 \leq X^{0.1} \mid \theta_0)\\
+& = \Pr(\theta_0^{1/0.1} \leq X \leq \theta_0^{1/0.9} \mid \theta_0)\\
+& = \int_{\theta_0^{1/0.1}}^{\theta_0^{1/0.9}} p(x | \theta_0) d  x = \frac{1}{\theta_0} (\theta_0^{1/0.9} - \theta_0^{1/0.1}),
+\end{align*}
+since $\theta_0^{1/0.9} <\theta_0$.
+\item We need to show that
+$$ \Pr(\theta <x^{ 0.9}  \mid x) = \Pr(\theta >x^{0.1} \mid x) = 0.1. $$
+First, the posterior is
+ \begin{align*}
+ p(\theta | x)  \propto p(x | \theta) p(\theta) =
+ \frac{1}{\theta} \1(0 <x <\theta) \1(0 <\theta <1)
+ \propto \frac{1}{\theta} \1(x <\theta <1).
+ \end{align*}
+ Since $\int_x^t (1/\theta) d\theta = \log \theta|_x^t = \log t - \log x$, then
+ $$ p(\theta | x) = \frac{1/\theta}{- \log x} \1(x <\theta <1),$$
+ and
+ $$ \Pr(\theta <t \mid x) = \int_x^t p(\theta | x)d\theta = \frac{\log t - \log x}{- \log x} = 1 - \frac{\log t}{\log x}. $$
+ Therefore,
+ $$ \Pr(\theta <x^{0.9} \mid x) = 1 - \frac{\log x^{0.9}}{\log x} = 0.1 $$
+ and
+ $$ \Pr(\theta >x^{0.1} \mid x) = \frac{\log x^{0.1}}{\log x} = 0.1. $$
+\end{enumerate}
+
+
+
+
+
+
+    
+\end{enumerate}
+
+
+
+
+\end{document}
+
+
+
+
+
+

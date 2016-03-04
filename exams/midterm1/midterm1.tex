@@ -1,0 +1,166 @@
+\documentclass[12pt]{article} 
+\input{custom}
+\usepackage[margin=1in]{geometry}
+
+
+\begin{document}
+\begin{center}
+\large\textbf{STA531 Midterm Exam 1}
+\end{center}
+
+\small
+
+\subsection*{Instructions}
+\begin{itemize}
+    \item Write your name, NetID, and signature below.
+    \item If you need extra space for any problem, continue on the back of the page.
+\end{itemize}
+
+\subsection*{Community Standard}
+To uphold the Duke Community Standard:
+\begin{itemize}
+\item I will not lie, cheat, or steal in my academic endeavors;
+\item I will conduct myself honorably in all my endeavors; and
+\item I will act if the Standard is compromised.
+\end{itemize}
+I have adhered to the Duke Community Standard in completing this exam.
+
+\vspace{1em}
+\begin{itemize}
+    \setlength\itemsep{1em}
+    \item[] Name: \hrulefill
+    \item[] NetID: \hrulefill
+    \item[] Signature: \hrulefill
+\end{itemize}
+
+\subsection*{Score}
+%(For TA use only --- leave this section blank.)
+
+\vspace{1em}
+%\begin{minipage}{1.0\textwidth}
+\begin{enumerate}
+    \setlength\itemsep{1em}
+    \item \line(1,0){100}
+    \item \line(1,0){100}
+    \item \line(1,0){100}
+    \item \line(1,0){100}
+        \vspace{1em}
+    \item[] Overall: \line(1,0){200}
+\end{enumerate}
+
+\newpage
+\subsection*{List of common distributions}
+% todo: any others?
+\begin{itemize}
+    \setlength\itemsep{1em}
+    \item[] $\displaystyle \Geometric(x|\theta) = \theta(1-\theta)^x\,\1(x\in\{0,1,2,\ldots\})$ for $0<\theta<1$
+    \item[] $\displaystyle \Bernoulli(x|\theta) = \theta^x(1-\theta)^{1-x}\,\1(x\in\{0,1\})$ for $0<\theta<1$
+    \item[] $\displaystyle \Binomial(x|n,\theta) = {n\choose x}\theta^x(1-\theta)^{n-x}\,\1(x\in\{0,1,\ldots,n\})$ for $0<\theta<1$
+    \item[] $\displaystyle \Poisson(x|\theta) = \frac{e^{-\theta}\theta^x}{x!}\,\1(x\in\{0,1,2,\ldots\})$ for $\theta>0$
+    \item[] $\displaystyle \Exp(x|\theta) = \theta e^{-\theta x}\,\1(x>0)$ for $\theta>0$
+    \item[] $\displaystyle \Uniform(x|a,b) = \frac{1}{b-a}\,\1(a<x<b)$ for $a<b$
+    \item[] $\displaystyle \Ga(x|a,b) = \frac{b^a}{\Gamma(a)}x^{a-1}e^{-b x}\,\1(x>0)$ for $a,b>0$
+    \item[] $\displaystyle \Pareto(x|\alpha,c) = \frac{\alpha c^\alpha}{x^{\alpha+1}}\,\1(x>c)$ for $\alpha,c>0$
+    \item[] $\displaystyle \Beta(x|a,b) = \frac{1}{B(a,b)}x^{a-1}(1-x)^{b-1}\,\1(0<x<1)$ for $a,b>0$
+    \item[] $\displaystyle \N(x|\mu,\sigma^2) = \frac{1}{\sqrt{2\pi\sigma^2}}\exp\big(-\tfrac{1}{2\sigma^2}(x-\mu)^2\big)$
+        for $\mu\in\R$, $\sigma^2>0$
+    \item[] $\displaystyle \N(x|\mu,C) = \frac{1}{(2\pi)^{d/2}|C|^{1/2}}\exp\big(-\tfrac{1}{2}(x-\mu)^\T C^{-1} (x-\mu)\big)$
+        for $\mu\in\R^d$, $C\in\R^{d\times d}$ symmetric positive definite.
+\end{itemize}
+
+\subsection*{Exponential family form}
+$$ p(x|\theta) =\exp\big(\varphi(\theta)^\T t(x)-\kappa(\theta)\big) h(x) $$
+
+\subsection*{List of special functions}
+\label{special-functions}
+\begin{itemize}
+    \setlength\itemsep{1em}
+    \item[] Beta function: $\displaystyle B(a,b) = \int_0^1 t^{a-1}(1-t)^{b-1} d t$ for $a,b>0$
+    \item[] Gamma function: $\displaystyle \Gamma(x) = \int_0^\infty t^{x-1} e^{-t} d t$ for $x>0$
+    %\item[] Log function for $a>1$: $\displaystyle \log a = \int_1^a (1/t) d t$
+\end{itemize}
+
+
+
+
+\normalsize
+
+\newpage
+\begin{enumerate}
+\item (25 points) Posterior consistency and asymptotic normality
+
+Suppose our model is $X_1,\ldots,X_n | \theta$ i.i.d.\ $\sim \Exp(\theta)$, along with an improper uniform prior on $\theta$. 
+\begin{enumerate}
+\setlength\itemsep{20em}
+\item\label{normality} (Asymptotic normality) Given observed data $x_1,\ldots,x_n$, what is the asymptotic normal approximation to the posterior $p(\theta | x_{1:n})$?  (Make sure you provide explicit expressions for the mean and variance in terms of $x_1,\ldots,x_n$.)
+\item (Posterior consistency) Suppose the true distribution is $\Exp(\theta_0)$, in other words, the observed data $x_1,\ldots,x_n$ are i.i.d.\ from $\Exp(\theta_0)$. Give an informal argument that the posterior is consistent for $\theta_0$, using the law of large numbers and the asymptotic normal approximation you derived in part \ref{normality}.
+\end{enumerate}
+
+
+
+
+\newpage
+\item (25 points) Posterior predictive checks
+
+Suppose we have a single observation $x\in\R$, which we model as $X | \theta \sim \N(\theta,1)$ with an improper uniform prior on $\theta$. 
+\begin{enumerate}
+\setlength\itemsep{14em}
+\item What is the posterior $p(\theta | x)$?
+\item What is the posterior predictive distribution for a replicate, $x^\text{rep} \in \R$? (Your answer should be a specific distribution with parameters depending on $x$, not a general formula.)
+\item Consider the test statistic $T(x) = x$. What is the posterior predictive p-value? (Your answer should be a specific numerical value, not a general formula.)
+\end{enumerate}
+
+
+
+\newpage
+\item (25 points) Modeling the data collection process
+
+\begin{enumerate}
+\setlength\itemsep{10em}
+\item What is the definition of ignorability?
+%\item What is the definition of strong ignorability?
+%\item Briefly explain, in words, why ignorability is desirable.
+%\setlength\itemsep{14em}
+\item Give an example of a model in which the data collection process is not ignorable.
+\end{enumerate}
+
+
+
+
+
+\newpage
+\item (25 points) Credible intervals and frequentist coverage
+
+Suppose we have a single observation $x\in(0,1)$ (i.e., $0<x<1$), which we model as $X | \theta \sim \Uniform(0,\theta)$ with prior $\theta\sim \Uniform(0,1)$. 
+
+\begin{enumerate}
+\setlength\itemsep{19em}
+\item Consider the interval $C(x) = [x^{0.9},x^{0.1}]$. What is the frequentist coverage probability of this interval when the true distribution is $\Uniform(0,\theta_0)$ for a given value $\theta_0 \in (0,1)$?
+\item Show that $C(x) = [x^{0.9},x^{0.1}]$ is an equal-tailed 80\% posterior credible interval.
+\end{enumerate}
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+\end{enumerate}
+
+
+
+
+\end{document}
+
+
+
+
+
+

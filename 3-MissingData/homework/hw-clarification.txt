@@ -1,0 +1,18 @@
+
+Okay, thanks for the question. Let me clarify.
+
+In part (a)(iv), when I say that your answer should work for any $$ L,m, k $$, I mean that your function $$ f $$ should have the property that
+
+$$ p(L | N)/f(N,L,k,m) \to 1 $$
+
+for any $$ L,m,k \geq 0 $$ such that $$ m \geq k $$ and $$ L \geq k $$. I'm not asking you to choose a prior in part (a)(iv).
+
+In part (a)(v), roughly speaking, I'm asking you to find---for each $$m$$ and $$k$$---the "most non-informative" prior of the form $$ 1/N^{r(m,k)} $$ that is guaranteed to lead to a proper posterior, no matter what $$L $$ you get. In other words, I'm asking you to figure out what the following function is equal to:
+
+$$ r(m,k) = \min \{r\geq 0 : p_r(N|L) \text{ is proper for all } L\}$$
+
+where $$ p_r(N | L)$$ is the posterior based on using a prior of the form $$ 1/N^r $$.
+
+
+
+

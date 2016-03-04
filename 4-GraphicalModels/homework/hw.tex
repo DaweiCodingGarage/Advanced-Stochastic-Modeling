@@ -1,0 +1,119 @@
+\documentclass[12pt]{article} 
+% Formatting
+\tolerance=1000
+\usepackage[margin=1.2in]{geometry}
+
+\input{../custom.tex}
+
+% Packages
+
+% \usepackage{amssymb,latexsym}
+\usepackage{amssymb,amsfonts,amsmath,latexsym,amsthm}
+\usepackage[usenames,dvipsnames]{color}
+\usepackage[]{graphicx}
+\usepackage[space]{grffile}
+\usepackage{mathrsfs}   % fancy math font
+% \usepackage[font=small,skip=0pt]{caption}
+\usepackage[skip=0pt]{caption}
+\usepackage{subcaption}
+\usepackage{verbatim}
+\usepackage{url}
+\usepackage{bm}
+\usepackage{dsfont}
+\usepackage{extarrows}
+\usepackage{multirow}
+% \usepackage{wrapfig}
+% \usepackage{epstopdf}
+\usepackage{rotating}
+\usepackage{tikz}
+\usetikzlibrary{fit}					% fitting shapes to coordinates
+%\usetikzlibrary{backgrounds}	% drawing the background after the foreground
+
+
+% \usepackage[dvipdfm,colorlinks,citecolor=blue,linkcolor=blue,urlcolor=blue]{hyperref}
+\usepackage[colorlinks,citecolor=blue,linkcolor=blue,urlcolor=blue]{hyperref}
+%\usepackage{hyperref}
+\usepackage[authoryear,round]{natbib}
+
+
+
+\title{Homework on graphical models}
+%\author{Jeff Miller}
+\date{}
+
+
+
+
+\begin{document}
+\maketitle
+
+\begin{enumerate}
+    \item\label{factor} Show that if $p(x,y,z) = g(x,z) h(y,z)$ for some nonnegative functions $g$ and $h$, then $p(x,y|z) = p(x|z)p(y|z)$ (i.e., $X\perp Y\mid Z$).
+\item In this exercise, you will derive the ``separation criterion'' for conditional independence in undirected graphical models.
+    Suppose $p(x_1,\ldots,x_n)$ respects an undirected graph $G$.
+    Suppose $A,B,C$ are disjoint subsets of vertices of $G$, such that all paths from $A$ to $B$ are blocked by $C$.
+    \begin{enumerate}
+        \item Divide the set of vertices not in $A$, $B$, or $C$ into two subsets: let $D$ be the subset that can be reached from $A$ without passing through $C$, and let $E$ be all the rest.
+            (Note that $A,B,C,D,E$ are disjoint and, together, account for all the vertices.)
+            Argue that for any clique $Q$, either $Q\cap D = \emptyset$ or $Q\cap E = \emptyset$, or both.
+        \item Show that $p(x_A,x_B|x_C) = p(x_A|x_C)p(x_B|x_C)$ (i.e., $X_A \perp X_B \mid  X_C$). (Hint: Take the joint distribution, sum over $x_D$ and $x_E$ to get an expression for $p(x_A,x_B,x_C)$, apply (a) to split it into two factors, and then apply exercise~\ref{factor} with $X_A,X_B,X_C$ in place of $X,Y,Z$.)
+    \end{enumerate}
+\item\label{an} Suppose $p$ respects a DAG $G$. Let $S$ be a subset of vertices, and let $\mathrm{an}(S)$ denote the set of ancestors of $S$ (including $S$).  Show that the marginal distribution $p(x_{\mathrm{an}(S)})$ respects the subgraph of ancestors of $S$ (i.e., the graph obtained by removing any non-ancestors and their edges). (Hint: Take the joint distribution and sum out all non-ancestors.)
+\item\label{moral} Show that if $p$ respects a DAG $G$, then $p$ also respects the (undirected) moralization of $G$.
+\item In this exercise, you will derive the ``moral ancestral separation criterion'' for conditional independence in directed graphical models.
+      Suppose $p$ respects a DAG $G$. 
+      Suppose $A,B,C$ are disjoint subsets of vertices of $G$, and let $G_\text{MA}$ denote the moralization of the subgraph of ancestors of $S = A\cup B\cup C$.
+      Argue that if all paths in $G_\text{MA}$ from $A$ to $B$ are blocked by $C$, then $p(x_A,x_B|x_C) = p(x_A|x_C)p(x_B|x_C)$ (i.e., $X_A\perp X_B \mid  X_C$).
+      (Hint: Use exercises \ref{an} and \ref{moral}, along with the separation criterion for conditional independence in undirected graphical models.)
+\end{enumerate}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\end{document}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
