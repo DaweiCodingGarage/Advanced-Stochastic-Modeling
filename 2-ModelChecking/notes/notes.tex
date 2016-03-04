@@ -1,4 +1,8 @@
 \documentclass[12pt]{article} 
+
+% NOTE: To produce blinded version, replace "0" with "1" below.
+\newcommand{\blind}{1}
+
 % Formatting
 \tolerance=1000
 \usepackage[margin=1.2in]{geometry}
@@ -50,7 +54,10 @@
 \maketitle
 
 \tableofcontents
-%\newpage
+
+\blankfootnote{This work is licensed under a \href{http://creativecommons.org/licenses/by-nc-nd/4.0/}{Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License}.  Jeffrey W. Miller. Course material for STA531 Advanced Stochastic Modeling, Spring 2016. Duke University, Durham, NC.}
+
+\newpage
 
 \vspace{2em}
 
@@ -88,7 +95,8 @@ Chapter 6 discusses ways of checking how well a Bayesian model is fitting the da
 
 \begin{figure}
 \begin{center}
-\includegraphics[width=0.8\textwidth]{election.png}
+\if0\blind { \includegraphics[width=0.8\textwidth]{election.png} } \fi
+\if1\blind { (figure omitted due to copyright reasons, sorry about that) } \fi
 \end{center}
 \caption{(BDA figure 6.1) Forecast of 1992 US presidential election. For each state, the height of the black bar indicates the probability of Clinton winning the election, and the width is the number of electoral votes. Polls from Texas and Florida not used in the forecast indicated much less support for Clinton than predicted, indicating a possible inadequacy of the model.}
 \end{figure}
@@ -111,8 +119,11 @@ The basic idea of  posterior predictive model checking is that the observed data
 
 \begin{figure}
 \begin{center}
+\if0\blind {
 \includegraphics[width=0.6\textwidth]{newcomb.png}\\
 \includegraphics[width=1.0\textwidth]{newcomb-rep.png}
+} \fi
+\if1\blind { (figure omitted due to copyright reasons, sorry about that) } \fi
 \end{center}
 \caption{\\Top: (BDA figure 3.1) Histogram of 66 measurements of the speed of light made by Simon Newcomb (Stigler, 1977). (See BDA for details.)\\
 Bottom: (BDA figure 6.2) Twenty replicate data sets from the posterior predictive distribution under a normal model, given the Newcomb data.}
@@ -122,7 +133,10 @@ Bottom: (BDA figure 6.2) Twenty replicate data sets from the posterior predictiv
 
 \begin{figure}
 \begin{center}
+\if0\blind {
 \includegraphics[width=0.5\textwidth]{newcomb-min.png}
+} \fi
+\if1\blind { (figure omitted due to copyright reasons, sorry about that) } \fi
 \end{center}
 \caption{(BDA figure 6.3) Histogram of the minimum values over the 20 replicate data sets, compared with the minimum value from the observed data set (the vertical line at around $-45$).}
 \label{figure:newcomb-min}
@@ -178,7 +192,10 @@ $$ p_B \approx \frac{1}{S}\sum_{s = 1}^S \1 \big(T(x^{\rep,s},\theta^s)\geq T(x,
 
 \begin{figure}
 \begin{center}
+\if0\blind {
 \includegraphics[width=1.0\textwidth]{newcomb-more.png}
+} \fi
+\if1\blind { (figure omitted due to copyright reasons, sorry about that) } \fi
 \end{center}
 \caption{(BDA figure 6.4) Left: Histogram of the sample variance over the 200 replicate data sets, compared with the observed sample variance. Right: Scatterplot of $T(x,\theta)$ versus $T(x^\rep,\theta)$ for the asymmetry statistic; the p-value is the fraction of points above the diagonal.}
 \label{figure:newcomb-more}
@@ -216,7 +233,10 @@ Here, $x_{(j)}$ indicates the $j$th order statistic.  The p-value is around 0.26
 
 \begin{figure}
 \begin{center}
+\if0\blind {
 \includegraphics[width=0.7\textwidth]{smoking.png}
+} \fi
+\if1\blind { (figure omitted due to copyright reasons, sorry about that) } \fi
 \end{center}
 \caption{(BDA figure 6.6) Fraction of boys and girls in the study who were smoking at each time (wave) $t = 1,\ldots,6$.}
 \label{figure:smoking}
@@ -259,7 +279,10 @@ $$  S_j|\gamma \sim \Bernoulli\big(\logit^{-1}(\gamma_0+ \gamma_1 x_{j 1} + \gam
 \end{itemize}
 \item Results:
 \begin{center}
+\if0\blind {
 \includegraphics[width=1\textwidth]{smoking-results.png}
+} \fi
+\if1\blind { (figure omitted due to copyright reasons, sorry about that) } \fi
 \end{center}
 \item Both models capture the fraction of never-smokers well.
 \item Model 2 captures the fraction of always-smokers much better than model 1.
@@ -280,7 +303,10 @@ $$  S_j|\gamma \sim \Bernoulli\big(\logit^{-1}(\gamma_0+ \gamma_1 x_{j 1} + \gam
 
 \begin{figure}
 \begin{center}
+\if0\blind {
 \includegraphics[width=1\textwidth]{graphical.png}
+} \fi
+\if1\blind { (figure omitted due to copyright reasons, sorry about that) } \fi
 \end{center}
 \caption{(BDA figure 6.7) Left: Observed data is a binary matrix of responses for each of 6 subjects. Right: Seven samples from the posterior predictive distribution for the 6 subjects.}
 \label{figure:graphical}
@@ -298,7 +324,10 @@ $$  S_j|\gamma \sim \Bernoulli\big(\logit^{-1}(\gamma_0+ \gamma_1 x_{j 1} + \gam
 
 \begin{figure}
 \begin{center}
+\if0\blind {
 \includegraphics[width=0.7\textwidth]{psychology-1.png}
+} \fi
+\if1\blind { (figure omitted due to copyright reasons, sorry about that) } \fi
 \end{center}
 \caption{(BDA figure 6.9) Left: Histogram of $\phi_1,\ldots,\phi_{90}$, for a single sample from the posterior, compared with the density of the prior, $\Beta(2,2)$. Right: Same for $\psi_1,\ldots,\psi_{69}$.}
 \label{figure:psychology-1}
@@ -306,7 +335,10 @@ $$  S_j|\gamma \sim \Bernoulli\big(\logit^{-1}(\gamma_0+ \gamma_1 x_{j 1} + \gam
 
 \begin{figure}
 \begin{center}
+\if0\blind {
 \includegraphics[width=0.7\textwidth]{psychology-2.png}
+} \fi
+\if1\blind { (figure omitted due to copyright reasons, sorry about that) } \fi
 \end{center}
 \caption{(BDA figure 6.10) Same as Figure \ref{figure:psychology-1}, with the revised prior.}
 \label{figure:psychology-2}
