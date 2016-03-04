@@ -198,13 +198,13 @@ Thus, we would have both
 $$ \hat\theta | \theta \sim \N(\theta,C)
 \quad \text{ and } \quad \theta | \hat\theta \approx \N(\hat\theta,C). $$
 
-It turns out that this thought experiment fairly accurately represents what happens in many models (subject to some regularity conditions, of course) when the sample size is sufficiently large and $\hat\theta$ is the MLE. In exponential families, $p(\theta | x_{1:n}) = p(\theta | \hat\theta)$ (the technical term here is that $\hat\theta$ is a \textit{sufficient statistic}). 
+It turns out that this thought experiment fairly accurately represents what happens in many models (subject to some regularity conditions, of course) when the sample size is sufficiently large and $\hat\theta$ is the MLE. Typically, in exponential families, $p(\theta | x_{1:n}) = p(\theta | \hat\theta)$ (the technical term here is that $\hat\theta$ is a \textit{sufficient statistic}). 
 % Note to self: I think the only condition here is that the exponential family needs to be identifiable.
 In fact, in many other models $p(\theta | x_{1:n}) \approx p(\theta | \hat\theta)$ --- basically, once we know $\hat\theta$, knowing $x_{1:n}$ doesn't tell us much more about $\theta$.  So, combined with equation \ref{equation:asymptotic-normality}, this explains the $\theta|\hat\theta$ part:
 $$ \theta | \hat\theta \approx \theta | x_{1:n} \approx \N \big(\hat\theta, I(\hat\theta; x_{1:n})^{-1} \big). $$
 What about $\hat\theta|\theta$?
-It is a classical result that the MLE is asymptotically normally distributed\footnote{The precise statement is that $I(\hat\theta_n; X_{1:n})^{1/2}(\hat\theta_n - \theta)$ converges in distribution to $\N(0,I)$.}:
-$$ \hat\theta | \theta \approx \N(\theta,I(\hat\theta; x_{1:n})^{-1}).$$
+It is a classical result that the MLE is asymptotically normally distributed\footnote{The precise statement is that $I(\theta; X_{1:n})^{1/2}(\hat\theta_n - \theta)$ converges in distribution to $\N(0,I)$.}:
+$$ \hat\theta | \theta \approx \N(\theta,I(\theta; x_{1:n})^{-1}).$$
 
 %While we are on the subject, we may as well define the \textit{Fisher information matrix}, $J(\theta)$, in which entry $(i,j)$ is
 %$$ J(\theta)_{ij}=  $$
