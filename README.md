@@ -1,6 +1,6 @@
-# STA531 - Advanced Stochastic Modeling
+# Advanced Stochastic Modeling
 
-Course material for STA531, Advanced Stochastic Modeling, Duke University, Spring 2016.
+Course material for Advanced Stochastic Modeling, STA531, Duke University, Spring 2016.
 
 ### Synopsis
 Building probabilistic models and performing inference with them. Discrete and continuous models, univariate and multivariate models, hierarchical models, graphical models, time-series models, mixture models. Model checking and robustness. Advanced computational methods for efficient inference. Familiarity with probability calculus, linear algebra, computer programming, and the basics of Bayesian statistics will be assumed.
