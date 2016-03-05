@@ -43,11 +43,9 @@
 
 
 
-\title{Notes accompanying BDA chapters 6 \& 7\\
-\large Model checking and cross-validation
-}
-\author{Jeff Miller}
-%\date{\today}
+\title{Model Checking and Cross-validation}
+\author{}
+\date{}
 
 
 \begin{document}
@@ -55,13 +53,13 @@
 
 \tableofcontents
 
-\blankfootnote{This work is licensed under a \href{http://creativecommons.org/licenses/by-nc-nd/4.0/}{Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License}.  Jeffrey W. Miller. Course material for STA531 Advanced Stochastic Modeling, Spring 2016. Duke University, Durham, NC.}
-
-\newpage
+\blankfootnote{This work is licensed under a \href{http://creativecommons.org/licenses/by-nc-nd/4.0/}{Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License}.  Jeffrey W. Miller (2016). \textit{Lecture Notes on Advanced Stochastic Modeling}. Duke University, Durham, NC.}
 
 \vspace{2em}
 
-Chapter 6 discusses ways of checking how well a Bayesian model is fitting the data, with a focus on posterior predictive checks. Chapter 7 discusses ways of evaluating, comparing, and expanding models, with a focus on model selection based on measures of generalization performance. The only topic from chapter 7 we will discuss is cross-validation.
+BDA chapter 6 discusses ways of checking how well a Bayesian model is fitting the data, with a focus on posterior predictive checks. BDA chapter 7 discusses ways of evaluating, comparing, and expanding models, with a focus on model selection based on measures of generalization performance. The only topic from chapter 7 we will discuss is cross-validation.
+
+\newpage
 
 \section{Introduction}
 
@@ -417,7 +415,7 @@ which is the probability of misclassification.
 \end{itemize}
 \end{itemize}
 
-\subsection*{A derivation of cross-validation}
+\subsection*{Cross-validation}
 \begin{itemize}
 \item Suppose we would like to estimate $\E_{p_0} \ell(X | x_{1:n})$. At first, it might seem like a natural idea to form a Monte Carlo approximation of this expectation, using the observed data to approximate $p_0$: i.e. to use $\frac{1}{n} \sum_{j = 1}^n \ell(x_j | x_{1:n})$. However, if you think about it, this will tend to make the performance look better than it actually is, since it is evaluating performance on the same data that was used for training/estimation/inference.
 \item If $T$ is a training subset, then

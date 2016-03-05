@@ -40,11 +40,9 @@
 
 
 
-\title{Notes accompanying BDA chapter 8\\
-\large Modeling accounting for data collection
-}
-\author{Jeff Miller}
-%\date{\today}
+\title{Modeling the Data Collection Process}
+\author{}
+\date{}
 
 
 \begin{document}
@@ -52,13 +50,13 @@
 
 \tableofcontents
 
-\blankfootnote{This work is licensed under a \href{http://creativecommons.org/licenses/by-nc-nd/4.0/}{Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License}.  Jeffrey W. Miller. Course material for STA531 Advanced Stochastic Modeling, Spring 2016. Duke University, Durham, NC.}
-
-%\newpage
+\blankfootnote{This work is licensed under a \href{http://creativecommons.org/licenses/by-nc-nd/4.0/}{Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License}.  Jeffrey W. Miller (2016). \textit{Lecture Notes on Advanced Stochastic Modeling}. Duke University, Durham, NC.}
 
 \vspace{2em}
 
-Many times, the construction of a data set involves some selection or collection process governing which samples we see. In many cases, we don't need to model this data collection process (it is ``ignorable''), but sometimes there are biases in the data collection process that are important to account for. Recognizing when such issues arise, and properly accounting for them, is probably one of the more subtle aspects of using statistics  in practice.
+Many times, the construction of a data set involves some selection or collection process governing which samples we see. In many cases, we don't need to model this data collection process (it is ``ignorable''), but sometimes there are biases in the data collection process that are important to account for. Recognizing when such issues arise, and properly accounting for them, is probably one of the more subtle aspects of using statistics  in practice. (These notes closely follow the notation and terminology of BDA chapter 8.)
+
+\newpage
 
 \section{Introduction}
 
@@ -233,7 +231,7 @@ $$ I_j^\text{A} | x,y,\phi \sim \Bernoulli(\logit^{-1}(\phi^\T x_j)) $$
 independently for $j = 1,\ldots,n$. This satisfies MCAR.
 \item If $\phi$ were known exactly, a priori, then we would also have strong ignorability. But if $\phi$ is unknown and we need to put a prior on it, then strong ignorability does not hold and we only have MCAR.
 \item To illustrate a situation in which MAR holds, but MCAR does not hold, suppose the treatment of patient $j$ is adaptively chosen based on the observed outcomes of patients $1,\ldots,j-1$, in addition to $x$ and $\phi$. This would be the case if the doctor adjusts her treatment decisions based on what she has learned from previous patients. In this case, MAR holds, but not MCAR.
-\item If $\theta$ and $\phi$ are independent in the prior (given $x$), then we have ``distinct parameters''. However, assuming such independence might not be reasonable in this example, since if $\theta_\text{B} - \theta_\text{A}$ is large then it is plausible that the doctor would have domain knowledge indicating this (perhaps from her background knowledge or from the medical literature), and so the doctor would be more likely to assign one treatment over the other (and thus $\phi$ would depend on $\theta$). 
+\item If $\theta$ and $\phi$ are independent in the prior (given $x$), then we have ``distinct parameters''. However, assuming such independence might not be reasonable in this example, since if $\theta_\text{B} - \theta_\text{A}$ is large then it is plausible that the doctor would have domain knowledge indicating this (perhaps from her background knowledge or from the medical literature), and so the doctor would be more likely to assign one treatment over the other (and thus our prior on $\phi$ would depend on $\theta$). 
 \end{itemize}
 
 
