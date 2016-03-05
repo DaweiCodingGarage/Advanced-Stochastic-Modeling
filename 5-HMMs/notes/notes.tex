@@ -38,7 +38,7 @@
 
 
 
-\title{Notes on Hidden Markovs Models (HMMs)}
+\title{Notes on Hidden Markovs Models}
 \author{Jeff Miller}
 %\date{\today}
 
@@ -50,18 +50,91 @@
 
 \blankfootnote{This work is licensed under a \href{http://creativecommons.org/licenses/by-nc-nd/4.0/}{Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License}.  Jeffrey W. Miller. Course material for STA531 Advanced Stochastic Modeling, Spring 2016. Duke University, Durham, NC.}
 
-%\newpage
 
 \vspace{2em}
 
 
+Hidden Markov models (HMMs) are a surprisingly powerful tool for modeling a wide range of sequential data, including speech, written text, genomic data, weather patterns, financial data, animal behaviors, and many more applications. Dynamic programming enables tractable inference in HMMs, including finding the most probable sequence of hidden states using the Viterbi algorithm, probabilistic inference using the forward-backward algorithm, and parameter estimation using the Baum--Welch algorithm.
 
-\section{Introduction}
+\newpage
 
+\section{Setup}
+
+\subsection{Refresher on Markov chains}
 \begin{itemize}
-\item 
+\item Recall that $(Z_1,\ldots,Z_n)$ is a Markov chain if
+$$ Z_{t +1} \perp (Z_1,\ldots,Z_{t -1}) \mid Z_t $$
+for each $t$, in other words, ``the future is conditionally independent of the past given the present.''
+\item This is equivalent to saying that the distribution respects the following directed graph:
+\input{markov-directed.tex}
+\item A Markov chain is a natural model to use for sequential data when the present state $Z_t$ contains all of the information about the future that could be gleaned from $Z_1,\ldots,Z_t$. In other words, when $Z_t$ is the ``complete state'' of the system.
+\item If $Z_t$ is sufficiently rich, then this may be the case, but oftentimes we only get to observe an incomplete or noisy version of $Z_t$. In such cases, a hidden Markov model is preferable.
 \end{itemize}
 
+\subsection{Hidden Markov model}
+\begin{itemize}
+\item A hidden Markov model is a distribution $p(x_1,\ldots,x_n,z_1,\ldots,z_n)$ that respects the following directed graph:
+\input{HMM-directed.tex}
+In other words, it factors as
+$$ p(x_{1:n},z_{1:n}) =p(z_1) p(x_1 | z_1) \prod_{t = 2}^n p(z_ t | z_{t -1}) p(x_t | z_t). $$
+\item It turns out that in this case, it is equivalent to say that the distribution respects the following undirected graph:
+\input{HMM-undirected.tex}
+\item $Z_1,\ldots,Z_n$ represent the ``hidden states'', and $X_1,\ldots,X_n$ represent the sequence of observations.
+\item Assume that $Z_1,\ldots,Z_n$ are discrete random variables taking finitely many possible values. For simplicity, let's denote these possible values as $1,\ldots,m$. In other words, $Z_t \in \{1,\ldots,m \}$.
+\item Assume that the ``transition probabilities'' $T(i,j) = \Pr(Z_{t +1} = j \mid Z_t = i)$ do not depend on the time index $t$. This assumption is referred to as ``time-homogeneity.'' The $m \times m$  matrix $T$ in which entry $(i,j)$ is $T(i,j)$ is referred to as the ``transition matrix.'' Note that every row of $T$ must sum to $1$. (A nonnegative matrix with this property is referred to as a ``stochastic matrix'').
+\item Assume that the ``emission distributions'' $\varepsilon_i(x_t) = p(x_t \mid Z_t = i)$ do not depend on the time index $t$. While we assume the $Z$'s are discrete, the $X$'s may be either discrete or continuous, and may also be multivariate.
+\item The ``initial distribution'' $\pi$ is the distribution of $Z_1$, that is, $\pi(i) = \Pr(Z_1 = i)$.
+\end{itemize}
+
+\subsection{Example}
+\begin{itemize}
+\item $m = 2$ hidden states, i.e., $Z_t \in \{1,2 \}$
+\item Initial distribution: $\pi = (0.5, 0.5)$
+\item Transition matrix:
+$$ T = \begin{bmatrix}.9 & .1\\.2 & .8 \end{bmatrix} $$
+\item Emission distributions: 
+$$X_t \mid Z_t = i \sim \N(\mu_i,\sigma_i^2)$$
+where $\mu = (-1,1)$ and $\sigma = (1,1)$.
+\end{itemize}
+
+
+\section{Overview of dynamic programming for HMMs}
+
+\begin{itemize}
+\item There are three main algorithms used for inference in HMMs: the Viterbi algorithm, the forward-backward algorithm, and the Baum--Welch algorithm.
+\item In the Viterbi algorithm and the forward-backward algorithm, it is assumed that all of the parameters are known---in other words, the initial distribution $\pi$, transition matrix $T$, and emission distributions $\varepsilon_i$ are all known.
+\item The Viterbi algorithm is an efficient method of computing the sequence $z_1^*,\ldots,z_n^*$ with the highest probability given $x_1,\ldots,x_n$, that is, computing
+$$ z_{1:n}^*= \argmax_{z_{1:n}} p(z_{1:n} | x_{1:n}). $$
+Naively maximizing over all sequences would take order $n m^n$ time, whereas the Viterbi algorithm only takes $n m^2$ time.
+\item The forward-backward algorithm enables one to efficiently compute a wide range of conditional probabilities given $x_{1:n}$, for example,
+\begin{itemize}
+\item $\Pr(Z_t = i \mid x_{1:n})$ for each $i$ and each $t$,
+\item $\Pr(Z_t = i, Z_{t+1}=j \mid x_{1:n})$ for each $i,j$ and each $t$,
+\item $\Pr(Z_t \neq Z_{t+1} \mid x_{1:n})$ for each $t$,
+\item etc.
+\end{itemize}
+\item The Baum--Welch algorithm is a method of estimating the parameters of an HMM (the initial distribution, transition matrix, and emission distributions), using expectation-maximization and the forward-backward algorithm.
+\item Historical fun facts:
+\begin{itemize}
+\item The term ``dynamic programming'' was coined by Richard Bellman in the 1940s, to describe his research on certain optimization problems that can be efficiently solved with recursions.
+\item How does it involve ``programming''? In this context, ``programming'' means optimization. As I understand it, this terminology comes from the 1940s during which there was a lot of work on how to optimize military plans or ``programs'', in the field of operations research. So, what is ``dynamic'' about it? There's a \href{https://en.wikipedia.org/wiki/Dynamic_programming#History}{funny story on Wikipedia} about why he called it ``dynamic'' programming.
+\end{itemize}
+\end{itemize}
+
+
+\section{Viterbi algorithm}
+
+(to do)
+
+
+
+
+
+
+
+\section{Forward-backward algorithm}
+
+(to do)
 
 
 
