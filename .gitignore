@@ -2,7 +2,9 @@
 *.out
 *.log
 *.toc
+*.blg
 *.bat
+*.bbl
 
 admin
 HMM
