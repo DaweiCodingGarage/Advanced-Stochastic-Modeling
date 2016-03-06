@@ -124,8 +124,92 @@ Naively maximizing over all sequences would take order $n m^n$ time, whereas the
 
 \section{Viterbi algorithm}
 
-(to do)
+\begin{itemize}
+\item Before we start, note the following facts. If $c \geq 0$ and $f(x) \geq 0$, then $\max_x c f(x) = c \max_x f(x)$ and $\argmax_x c f(x) = \argmax_x f(x)$. Also note that $\max_{x,y} f(x,y) = \max_x \max_y f(x,y)$.
+\item The goal of the Viterbi algorithm is to find\footnote{The $\argmax$ is the set of maximizers, i.e., $x^* \in \argmax_x f(x)$ means that $f(x^*) = \max_x f(x)$.}
+$$ z_{1:n}^* \in \argmax_{z_{1:n}} p(z_{1:n} | x_{1:n}). $$
+Since $p(x_{1:n})$ is constant with respect to $z_{1:n}$, this is equivalent to
+$$ z_{1:n}^* \in \argmax_{z_{1:n}} p(x_{1:n},z_{1:n}). $$
+\item Naively, this would take order $n m^n$ time, since there are $m^n$ sequences $z_{1:n}$ and computing $p(x_{1:n},z_{1:n})$ takes order $n$ time. The Viterbi algorithm provides a much faster way.
+\end{itemize}
 
+\subsection{Computing the max}
+\begin{itemize}
+\item Before trying to find the argmax, let's think about the max:
+$$ M = \max_{z_{1:n}} p(x_{1:n},z_{1:n}). $$
+\item Throughout the following derivation, we will assume $x_{1:n}$ is fixed, and will su
+ppress it from the notation for clarity. 
+\item For reasons that will become clear in a second, define $\mu_1(z_1) = p(z_1) p(x_1 | z_1)$. Writing out the factorization implied by the graphical model for an HMM,
+$$ p(x_{1:n},z_{1:n}) = \underbrace{p(z_1) p(x_1 | z_1)}_{\textstyle\mu_1(z_1)} p(z_2 | z_1) p(x_2 | z_2)
+	 \prod_{t = 3}^n p(z_ t | z_{t -1}) p(x_t | z_t), $$
+we have
+\begin{align*}
+M &= \max_{z_{2:n}} \Big(\underbrace{\max_{z_1} \mu_1(z_1) p(z_2 | z_1) p(x_2 | z_2)}_{\textstyle\text{call this } \mu_2(z_2)}\Big)
+	 \prod_{t = 3}^n p(z_ t | z_{t -1}) p(x_t | z_t) \\
+  &= \max_{z_{3:n}} \Big(\underbrace{\max_{z_2} \mu_2(z_2) p(z_3 | z_2) p(x_3 | z_3)}_{\textstyle\text{call this } \mu_3(z_3)}\Big)
+  	 \prod_{t = 4}^n p(z_ t | z_{t -1}) p(x_t | z_t) \\
+  &~~\vdots\\
+  &= \max_{z_{j:n}} \Big(\underbrace{\max_{z_{j-1}} \mu_{j-1}(z_{j-1}) p(z_j | z_{j-1}) p(x_j | z_j)}_{\textstyle\text{call this } \mu_j(z_j)}\Big)
+  	 \prod_{t = j+1}^n p(z_ t | z_{t -1}) p(x_t | z_t) \\
+  &~~\vdots\\
+  &= \max_{z_n} \mu_n(z_n).
+\end{align*}
+\item Therefore, we can compute $M$ via the following algorithm:
+\begin{enumerate}
+\item For each $z_1 = 1,\ldots,m$, compute $\mu_1(z_1) = p(z_1) p(x_1 | z_1)$.
+\item For each $j = 2,\ldots,n$, for each $z_j = 1,\ldots,m$, compute
+$$ \mu_j(z_j) = \max_{z_{j-1}} \mu_{j -1}(z_{j -1}) p(z_j | z_{j-1}) p(x_j | z_j). $$
+\item Compute $M = \max_{z_n} \mu_n (z_n)$.
+\end{enumerate}
+\item How much time does this take, as a function of $m$ and $n$? Step 1 takes order $m$ time. In step 2, for each $j$ and each $z_j$, it takes order $m$ time to compute $\mu_j(z_j)$. So, overall, step 2 takes $n m^2$ time. Step 3 takes order $m$ time. Thus, altogether, the computation takes order $n m^2$ time.
+\end{itemize}
+
+\subsection{Computing the argmax}
+\begin{itemize}
+\item Okay, so now we know how to compute the max, $M$. But who cares about the max? What we really want is the argmax! We want to know $z_{1:n}^*$, the most probable sequence of $z$'s. It turns out that in the algorithm above, we've basically already done all the work required to find $z_{1:n}^*$.
+\item First note that, by the graphical model, 
+$$ \mu_j(z_j) = \max_{z_{1:j-1}} p(x_{1:j},z_{1:j}), $$
+for each $j = 2,\ldots,n$. (As an aside, this gives us a nice interpretation of $\mu_j(z_j)$ as the maximum that $p(x_{1:j},z_{1:j})$ can be with a given value of $z_j$.)
+\item So, in particular,
+$$ z_n^*= \argmax_{z_n} \max_{z_{1:n-1}} p(x_{1:n},z_{1:n})
+= \argmax_{z_n} \mu_n(z_n). $$
+\item And for $j = n-1,n-2,\ldots,2$,
+\begin{align*}
+z_{j-1}^* & = \argmax_{z_{j-1}} \max_{z_{1:j-2}} p(x_{1:j -1},z_{1:j -1},x_j,z_j^*)\\
+& = \argmax_{z_{j-1}} \max_{z_{1:j-2}} p(x_{1:j -1},z_{1:j -1})p(z_j^*| z_{j-1})p(x_j|z_j^*)\\
+& = \argmax_{z_{j-1}} \mu_{j-1}(z_{j-1})p(z_j^*| z_{j-1})p(x_j|z_j^*).
+\end{align*}
+\item Note that this last expression is identical to the formula for $\mu_j(z_j)$, but with an argmax instead of a max, and with $z_j^*$ instead of $z_j$.
+\item So, let's modify step 2 the algorithm above to also compute
+$$ \alpha_j(z_j) = \argmax_{z_{j-1}} \mu_{j-1}(z_{j-1}) p(z_j^*| z_j) p(x_j | z_j^*). $$
+Note that this doesn't really require any additional computation---we already have to loop over $z_{j-1}$ to compute $\mu_j(z_j)$, so to find $\alpha_j(z_j)$ we just need to record which value of $z_{j-1}$ was the maximizer.
+\item With $\alpha_j(z_j)$ defined in this way, we can recover $z_{1:n}^*$ by computing
+\begin{align*}
+&z_n^* = \argmax_{z_n} \mu_n(z_n)\\
+&z_{n-1}^* = \alpha_n(z_n^*)\\
+&~~\vdots\\
+&z_{j-1}^* = \alpha_j(z_j^*)\\
+&~~\vdots\\
+&z_1^* = \alpha_2(z_2^*).
+\end{align*} 
+\item In theory, this provides an algorithm for computing $z_{1:n}^*$. However, in practice, the algorithm above doesn't work! \textit{What?!? Why? And why did we work so hard deriving it then?} The reason why the algorithm fails is very subtle---we will discuss this next---and fortunately, there is an easy fix.
+\end{itemize}
+
+\subsection{Fixing arithmetic underflow by using logs}
+\begin{itemize}
+\item Except for rather short sequences in which $n$ is relatively small, say, a couple hundred or so, the algorithm above will fail due to the fact that we are trying to represent numbers that are too small (or too large) for the computer to handle. And what's worse, you will usually  receive no warning or error that something has gone wrong. Basically, the issue is that (in most programming languages), there is a limit on how small (or large) of a number can be represented. (For example, in a couple of languages that I use, the lower limit seems to be around $10^{-323}$, and the upper limit around $10^{308}$.) Anything smaller (or larger) than this will be considered to be exactly zero (or infinity). This is referred to as ``arithmetic underflow'' (or ``arithmetic overflow'').
+\item Unfortunately, in the algorithm described above, we will regularly encounter very very small numbers, because we are multiplying together a large number of probabilities, and arithmetic underflow is very likely to occur.  (It is also possible for arithmetic overflow to occur if the $x$'s are continuous since densities can be larger than $1$.)
+\item The standard solution to this problem is to work with log-probabilities. This is a trick that works in a lot of other problems as well.
+\item Denote $\ell = \log p$, e.g., $\ell(z_1) = \log p(z_1)$, $\ell(z_t | z_{t -1}) = \log p(z_t | z_{t-1})$, and $\ell(x_t | z_t) = \log p(x_t | z_t)$.
+\item The algorithm of the previous subsection works if we use $f_j(z_j)$ in place of $\mu_j(z_j)$, where
+\begin{align*}
+f_1(z_1) &= \ell(z_1) + \ell(x_1 | z_1) \\
+f_j(z_j) &= \max_{z_{j-1}} \Big(f_{j-1}(z_{j-1}) + \ell(z_j | z_{j-1}) + \ell(x_j | z_j) \Big),
+\end{align*}
+and 
+$$ \alpha_j(z_j) = \argmax_{z_{j-1}} \Big(f_{j-1}(z_{j-1}) + \ell(z_j | z_{j-1}) + \ell(x_j | z_j) \Big).$$
+\item I'll leave it to you to work out the details.
+\end{itemize}
 
 
 
