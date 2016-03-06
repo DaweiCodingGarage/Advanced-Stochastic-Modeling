@@ -38,7 +38,7 @@
 
 
 
-\title{Hidden Markovs Models}
+\title{Hidden Markov Models}
 \author{}
 \date{}
 
@@ -68,10 +68,10 @@ for each $t$, in other words, ``the future is conditionally independent of the p
 \item This is equivalent to saying that the distribution respects the following directed graph:
 \input{markov-directed.tex}
 \item A Markov chain is a natural model to use for sequential data when the present state $Z_t$ contains all of the information about the future that could be gleaned from $Z_1,\ldots,Z_t$. In other words, when $Z_t$ is the ``complete state'' of the system.
-\item If $Z_t$ is sufficiently rich, then this may be the case, but oftentimes we only get to observe an incomplete or noisy version of $Z_t$. In such cases, a hidden Markov model is preferable.
+\item If $Z_t$ is sufficiently rich, then this may be a reasonable assumption, but oftentimes we only get to observe an incomplete or noisy version of $Z_t$. In such cases, a hidden Markov model is preferable.
 \end{itemize}
 
-\subsection{Hidden Markov model}
+\subsection{Hidden Markov models}
 \begin{itemize}
 \item A hidden Markov model is a distribution $p(x_1,\ldots,x_n,z_1,\ldots,z_n)$ that respects the following directed graph:
 \input{HMM-directed.tex}
@@ -80,8 +80,8 @@ $$ p(x_{1:n},z_{1:n}) =p(z_1) p(x_1 | z_1) \prod_{t = 2}^n p(z_ t | z_{t -1}) p(
 \item It turns out that in this case, it is equivalent to say that the distribution respects the following undirected graph:
 \input{HMM-undirected.tex}
 \item $Z_1,\ldots,Z_n$ represent the ``hidden states'', and $X_1,\ldots,X_n$ represent the sequence of observations.
-\item Assume that $Z_1,\ldots,Z_n$ are discrete random variables taking finitely many possible values. For simplicity, let's denote these possible values as $1,\ldots,m$. In other words, $Z_t \in \{1,\ldots,m \}$.
-\item Assume that the ``transition probabilities'' $T(i,j) = \Pr(Z_{t +1} = j \mid Z_t = i)$ do not depend on the time index $t$. This assumption is referred to as ``time-homogeneity.'' The $m \times m$  matrix $T$ in which entry $(i,j)$ is $T(i,j)$ is referred to as the ``transition matrix.'' Note that every row of $T$ must sum to $1$. (A nonnegative matrix with this property is referred to as a ``stochastic matrix'').
+\item Assume that $Z_1,\ldots,Z_n$ are discrete random variables taking finitely many possible values. For simplicity, let's denote these possible values by $1,\ldots,m$. In other words, $Z_t \in \{1,\ldots,m \}$.
+\item Assume that the ``transition probabilities'' $T(i,j) = \Pr(Z_{t +1} = j \mid Z_t = i)$ do not depend on the time index $t$. This assumption is referred to as ``time-homogeneity.'' The $m \times m$  matrix $T$ in which entry $(i,j)$ is $T(i,j)$ is referred to as the ``transition matrix.'' Note that every row of $T$ must sum to $1$. (A nonnegative square matrix with this property is referred to as a ``stochastic matrix''.)
 \item Assume that the ``emission distributions'' $\varepsilon_i(x_t) = p(x_t \mid Z_t = i)$ do not depend on the time index $t$. While we assume the $Z$'s are discrete, the $X$'s may be either discrete or continuous, and may also be multivariate.
 \item The ``initial distribution'' $\pi$ is the distribution of $Z_1$, that is, $\pi(i) = \Pr(Z_1 = i)$.
 \end{itemize}
@@ -103,8 +103,8 @@ where $\mu = (-1,1)$ and $\sigma = (1,1)$.
 \begin{itemize}
 \item There are three main algorithms used for inference in HMMs: the Viterbi algorithm, the forward-backward algorithm, and the Baum--Welch algorithm.
 \item In the Viterbi algorithm and the forward-backward algorithm, it is assumed that all of the parameters are known---in other words, the initial distribution $\pi$, transition matrix $T$, and emission distributions $\varepsilon_i$ are all known.
-\item The Viterbi algorithm is an efficient method of computing the sequence $z_1^*,\ldots,z_n^*$ with the highest probability given $x_1,\ldots,x_n$, that is, computing
-$$ z_{1:n}^*= \argmax_{z_{1:n}} p(z_{1:n} | x_{1:n}). $$
+\item The Viterbi algorithm is an efficient method of finding a sequence $z_1^*,\ldots,z_n^*$ with maximal probability given $x_1,\ldots,x_n$, that is, finding a\footnote{The $\argmax$ is the set of maximizers, i.e., $x^* \in \argmax_x f(x)$ means that $f(x^*) = \max_x f(x)$.}
+$$ z_{1:n}^* \in \argmax_{z_{1:n}} p(z_{1:n} | x_{1:n}). $$
 Naively maximizing over all sequences would take order $n m^n$ time, whereas the Viterbi algorithm only takes $n m^2$ time.
 \item The forward-backward algorithm enables one to efficiently compute a wide range of conditional probabilities given $x_{1:n}$, for example,
 \begin{itemize}
@@ -117,7 +117,7 @@ Naively maximizing over all sequences would take order $n m^n$ time, whereas the
 \item Historical fun facts:
 \begin{itemize}
 \item The term ``dynamic programming'' was coined by Richard Bellman in the 1940s, to describe his research on certain optimization problems that can be efficiently solved with recursions.
-\item How does it involve ``programming''? In this context, ``programming'' means optimization. As I understand it, this terminology comes from the 1940s during which there was a lot of work on how to optimize military plans or ``programs'', in the field of operations research. So, what is ``dynamic'' about it? There's a \href{https://en.wikipedia.org/wiki/Dynamic_programming#History}{funny story on Wikipedia} about why he called it ``dynamic'' programming.
+\item In this context, ``programming'' means optimization. As I understand it, this terminology comes from the 1940s during which there was a lot of work on how to optimize military plans or ``programs'', in the field of operations research. So, what is ``dynamic'' about it? There's a \href{https://en.wikipedia.org/wiki/Dynamic_programming#History}{funny story on Wikipedia} about why he called it ``dynamic'' programming.
 \end{itemize}
 \end{itemize}
 
@@ -126,7 +126,7 @@ Naively maximizing over all sequences would take order $n m^n$ time, whereas the
 
 \begin{itemize}
 \item Before we start, note the following facts. If $c \geq 0$ and $f(x) \geq 0$, then $\max_x c f(x) = c \max_x f(x)$ and $\argmax_x c f(x) = \argmax_x f(x)$. Also note that $\max_{x,y} f(x,y) = \max_x \max_y f(x,y)$.
-\item The goal of the Viterbi algorithm is to find\footnote{The $\argmax$ is the set of maximizers, i.e., $x^* \in \argmax_x f(x)$ means that $f(x^*) = \max_x f(x)$.}
+\item The goal of the Viterbi algorithm is to find a
 $$ z_{1:n}^* \in \argmax_{z_{1:n}} p(z_{1:n} | x_{1:n}). $$
 Since $p(x_{1:n})$ is constant with respect to $z_{1:n}$, this is equivalent to
 $$ z_{1:n}^* \in \argmax_{z_{1:n}} p(x_{1:n},z_{1:n}). $$
@@ -137,8 +137,7 @@ $$ z_{1:n}^* \in \argmax_{z_{1:n}} p(x_{1:n},z_{1:n}). $$
 \begin{itemize}
 \item Before trying to find the argmax, let's think about the max:
 $$ M = \max_{z_{1:n}} p(x_{1:n},z_{1:n}). $$
-\item Throughout the following derivation, we will assume $x_{1:n}$ is fixed, and will su
-ppress it from the notation for clarity. 
+\item Throughout the following derivation, we will assume $x_{1:n}$ is fixed, and will suppress it from the notation for clarity. 
 \item For reasons that will become clear in a second, define $\mu_1(z_1) = p(z_1) p(x_1 | z_1)$. Writing out the factorization implied by the graphical model for an HMM,
 $$ p(x_{1:n},z_{1:n}) = \underbrace{p(z_1) p(x_1 | z_1)}_{\textstyle\mu_1(z_1)} p(z_2 | z_1) p(x_2 | z_2)
 	 \prod_{t = 3}^n p(z_ t | z_{t -1}) p(x_t | z_t), $$
@@ -166,49 +165,46 @@ $$ \mu_j(z_j) = \max_{z_{j-1}} \mu_{j -1}(z_{j -1}) p(z_j | z_{j-1}) p(x_j | z_j
 
 \subsection{Computing the argmax}
 \begin{itemize}
-\item Okay, so now we know how to compute the max, $M$. But who cares about the max? What we really want is the argmax! We want to know $z_{1:n}^*$, the most probable sequence of $z$'s. It turns out that in the algorithm above, we've basically already done all the work required to find $z_{1:n}^*$.
-\item First note that, by the graphical model, 
-$$ \mu_j(z_j) = \max_{z_{1:j-1}} p(x_{1:j},z_{1:j}), $$
-for each $j = 2,\ldots,n$. (As an aside, this gives us a nice interpretation of $\mu_j(z_j)$ as the maximum that $p(x_{1:j},z_{1:j})$ can be with a given value of $z_j$.)
-\item So, in particular,
-$$ z_n^*= \argmax_{z_n} \max_{z_{1:n-1}} p(x_{1:n},z_{1:n})
-= \argmax_{z_n} \mu_n(z_n). $$
-\item And for $j = n-1,n-2,\ldots,2$,
+\item Okay, so now we know how to compute the max, $M$. But who cares about the max? What we really want is the argmax! More precisely, we want to find a sequence $z_{1:n}^*$ maximizing $p(x_{1:n},z_{1:n})$. It turns out that in the algorithm above, we've basically already done all the work required to find such a $z_{1:n}^*$.
+\item Let's augment step 2 in the algorithm above, by also recording a value of $z_{j-1}$ attaining the maximum in the definition of $\mu_j(z_j)$; let's denote this $z_{j-1}$ by $\alpha_j(z_j)$. In other words, in addition to computing $\mu_j(z_j)$, we are going to define $\alpha_j(z_j)$ to be any value such that
+$$ \alpha_j(z_j) \in \argmax_{z_{j-1}} \mu_{j-1}(z_{j-1}) p(z_j| z_{j-1}) p(x_j | z_j). $$
+Note that this doesn't really require any additional computation---we already have to loop over $z_{j-1}$ to compute $\mu_j(z_j)$, so to get $\alpha_j(z_j)$ we just need to record one of the maximizing values of $z_{j-1}$.
+\item Now, choose any $z_n^*$ such that $\mu_n(z_n^*) = \max_{z_n} \mu_n(z_n)$, and for $j = n,n -1,\ldots,2$ successively, let $z_{j -1}^* = \alpha_j(z_j^*)$. 
+\item That gives us a sequence $z_{1:n}^*$, but how do we know that this sequence attains the maximum?  Note that $\mu_n(z_n^*) = M$ and for each $j = n,n -1,\ldots,2$,
 \begin{align*}
-z_{j-1}^* & = \argmax_{z_{j-1}} \max_{z_{1:j-2}} p(x_{1:j -1},z_{1:j -1},x_j,z_j^*)\\
-& = \argmax_{z_{j-1}} \max_{z_{1:j-2}} p(x_{1:j -1},z_{1:j -1})p(z_j^*| z_{j-1})p(x_j|z_j^*)\\
-& = \argmax_{z_{j-1}} \mu_{j-1}(z_{j-1})p(z_j^*| z_{j-1})p(x_j|z_j^*).
+\mu_j(z_j^*)
+&= \max_{z_{j-1}} \mu_{j -1}(z_{j-1}) p(z_j^*| z_{j-1})p(x_j | z_j^*)\\  
+&=\mu_{j -1}(z_{j -1}^*) p(z_j^*| z_{j -1}^*)p(x_j | z_j^*).
 \end{align*}
-\item Note that this last expression is identical to the formula for $\mu_j(z_j)$, but with an argmax instead of a max, and with $z_j^*$ instead of $z_j$.
-\item So, let's modify step 2 the algorithm above to also compute
-$$ \alpha_j(z_j) = \argmax_{z_{j-1}} \mu_{j-1}(z_{j-1}) p(z_j^*| z_j) p(x_j | z_j^*). $$
-Note that this doesn't really require any additional computation---we already have to loop over $z_{j-1}$ to compute $\mu_j(z_j)$, so to find $\alpha_j(z_j)$ we just need to record which value of $z_{j-1}$ was the maximizer.
-\item With $\alpha_j(z_j)$ defined in this way, we can recover $z_{1:n}^*$ by computing
+\item Therefore, plugging in this expression for $\mu_j(z_j^*)$ repeatedly,
 \begin{align*}
-&z_n^* = \argmax_{z_n} \mu_n(z_n)\\
-&z_{n-1}^* = \alpha_n(z_n^*)\\
+M & = \mu_n(z_n^*)\\
+& = \mu_{n -1}(z_{n -1}^*) p(z_n^*| z_{n -1}^*) p(x_n | z_n^*)\\
+& = \mu_{n -2}(z_{n -2}^*) p(z_{n -1}^*| z_{n -2}^*) p(x_{n -1} | z_{n -1}^*) p(z_n^*| z_{n -1}^*) p(x_n | z_n^*)\\
 &~~\vdots\\
-&z_{j-1}^* = \alpha_j(z_j^*)\\
-&~~\vdots\\
-&z_1^* = \alpha_2(z_2^*).
-\end{align*} 
+& = \mu_j(z_j^*) \prod_{t = j +1}^n p(z_t^*| z_{t -1}^*) p(x_t | z_t^*)\\
+& ~~\vdots\\
+& = p(z_1^*) p(x_1 | z_1^*) \prod_{t = 2}^n p(z_t^*| z_{t -1}^*) p(x_t | z_t^*)\\
+& = p(x_{1:n},z_{1:n}^*).
+\end{align*}
+So, $z_{1:n}^*$ is indeed a maximizer.
 \item In theory, this provides an algorithm for computing $z_{1:n}^*$. However, in practice, the algorithm above doesn't work! \textit{What?!? Why? And why did we work so hard deriving it then?} The reason why the algorithm fails is very subtle---we will discuss this next---and fortunately, there is an easy fix.
 \end{itemize}
 
-\subsection{Fixing arithmetic underflow by using logs}
+\subsection{Fixing arithmetic underflow/overflow by using logs}
 \begin{itemize}
 \item Except for rather short sequences in which $n$ is relatively small, say, a couple hundred or so, the algorithm above will fail due to the fact that we are trying to represent numbers that are too small (or too large) for the computer to handle. And what's worse, you will usually  receive no warning or error that something has gone wrong. Basically, the issue is that (in most programming languages), there is a limit on how small (or large) of a number can be represented. (For example, in a couple of languages that I use, the lower limit seems to be around $10^{-323}$, and the upper limit around $10^{308}$.) Anything smaller (or larger) than this will be considered to be exactly zero (or infinity). This is referred to as ``arithmetic underflow'' (or ``arithmetic overflow'').
 \item Unfortunately, in the algorithm described above, we will regularly encounter very very small numbers, because we are multiplying together a large number of probabilities, and arithmetic underflow is very likely to occur.  (It is also possible for arithmetic overflow to occur if the $x$'s are continuous since densities can be larger than $1$.)
-\item The standard solution to this problem is to work with log-probabilities. This is a trick that works in a lot of other problems as well.
+\item The standard solution to this problem is to work with logs. This is a trick that works in a lot of other problems as well.
 \item Denote $\ell = \log p$, e.g., $\ell(z_1) = \log p(z_1)$, $\ell(z_t | z_{t -1}) = \log p(z_t | z_{t-1})$, and $\ell(x_t | z_t) = \log p(x_t | z_t)$.
-\item The algorithm of the previous subsection works if we use $f_j(z_j)$ in place of $\mu_j(z_j)$, where
+\item The algorithm described above works if we use $f_j(z_j)$ in place of $\mu_j(z_j)$, where
 \begin{align*}
 f_1(z_1) &= \ell(z_1) + \ell(x_1 | z_1) \\
 f_j(z_j) &= \max_{z_{j-1}} \Big(f_{j-1}(z_{j-1}) + \ell(z_j | z_{j-1}) + \ell(x_j | z_j) \Big),
 \end{align*}
 and 
-$$ \alpha_j(z_j) = \argmax_{z_{j-1}} \Big(f_{j-1}(z_{j-1}) + \ell(z_j | z_{j-1}) + \ell(x_j | z_j) \Big).$$
-\item I'll leave it to you to work out the details.
+$$ \alpha_j(z_j) \in \argmax_{z_{j-1}} \Big(f_{j-1}(z_{j-1}) + \ell(z_j | z_{j-1}) + \ell(x_j | z_j) \Big).$$
+\item The reason why it works is because $\log$ is order-preserving. This implies that $f_j(z_j) = \log \mu_j(z_j)$, and consequently, that choosing $\alpha_j(z_j)$ in this way is equivalent to the earlier definition.
 \end{itemize}
 
 
