@@ -66,7 +66,7 @@ Hidden Markov models (HMMs) are a surprisingly powerful tool for modeling a wide
 $$ Z_{t +1} \perp (Z_1,\ldots,Z_{t -1}) \mid Z_t $$
 for each $t$, in other words, ``the future is conditionally independent of the past given the present.''
 \item This is equivalent to saying that the distribution respects the following directed graph:
-\input{markov-directed.tex}
+\input{figures/markov-directed.tex}
 \item A Markov chain is a natural model to use for sequential data when the present state $Z_t$ contains all of the information about the future that could be gleaned from $Z_1,\ldots,Z_t$. In other words, when $Z_t$ is the ``complete state'' of the system.
 \item If $Z_t$ is sufficiently rich, then this may be a reasonable assumption, but oftentimes we only get to observe an incomplete or noisy version of $Z_t$. In such cases, a hidden Markov model is preferable.
 \end{itemize}
@@ -74,11 +74,11 @@ for each $t$, in other words, ``the future is conditionally independent of the p
 \subsection{Hidden Markov models}
 \begin{itemize}
 \item A hidden Markov model is a distribution $p(x_1,\ldots,x_n,z_1,\ldots,z_n)$ that respects the following directed graph:
-\input{HMM-directed.tex}
+\input{figures/HMM-directed.tex}
 In other words, it factors as
 $$ p(x_{1:n},z_{1:n}) =p(z_1) p(x_1 | z_1) \prod_{t = 2}^n p(z_ t | z_{t -1}) p(x_t | z_t). $$
 \item It turns out that in this case, it is equivalent to say that the distribution respects the following undirected graph:
-\input{HMM-undirected.tex}
+\input{figures/HMM-undirected.tex}
 \item $Z_1,\ldots,Z_n$ represent the ``hidden states'', and $X_1,\ldots,X_n$ represent the sequence of observations.
 \item Assume that $Z_1,\ldots,Z_n$ are discrete random variables taking finitely many possible values. For simplicity, let's denote these possible values by $1,\ldots,m$. In other words, $Z_t \in \{1,\ldots,m \}$.
 \item Assume that the ``transition probabilities'' $T_{i j} = \Pr(Z_{t +1} = j \mid Z_t = i)$ do not depend on the time index $t$. This assumption is referred to as ``time-homogeneity.'' The $m \times m$  matrix $T$ in which entry $(i,j)$ is $T_{i j}$ is referred to as the ``transition matrix.'' Note that every row of $T$ must sum to $1$. (A nonnegative square matrix with this property is referred to as a ``stochastic matrix''.)
