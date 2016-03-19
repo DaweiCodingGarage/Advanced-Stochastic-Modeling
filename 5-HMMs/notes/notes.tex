@@ -3,7 +3,7 @@
 \tolerance=1000
 \usepackage[margin=1.2in]{geometry}
 
-\input{custom.tex}
+\input{../../custom.tex}
 
 
 % Packages
@@ -53,10 +53,10 @@
 
 \vspace{2em}
 
+\newpage
 
 Hidden Markov models (HMMs) are a surprisingly powerful tool for modeling a wide range of sequential data, including speech, written text, genomic data, weather patterns, financial data, animal behaviors, and many more applications. Dynamic programming enables tractable inference in HMMs, including finding the most probable sequence of hidden states using the Viterbi algorithm, probabilistic inference using the forward-backward algorithm, and parameter estimation using the Baum--Welch algorithm.
 
-\newpage
 
 \section{Setup}
 
@@ -81,9 +81,9 @@ $$ p(x_{1:n},z_{1:n}) =p(z_1) p(x_1 | z_1) \prod_{t = 2}^n p(z_ t | z_{t -1}) p(
 \input{HMM-undirected.tex}
 \item $Z_1,\ldots,Z_n$ represent the ``hidden states'', and $X_1,\ldots,X_n$ represent the sequence of observations.
 \item Assume that $Z_1,\ldots,Z_n$ are discrete random variables taking finitely many possible values. For simplicity, let's denote these possible values by $1,\ldots,m$. In other words, $Z_t \in \{1,\ldots,m \}$.
-\item Assume that the ``transition probabilities'' $T(i,j) = \Pr(Z_{t +1} = j \mid Z_t = i)$ do not depend on the time index $t$. This assumption is referred to as ``time-homogeneity.'' The $m \times m$  matrix $T$ in which entry $(i,j)$ is $T(i,j)$ is referred to as the ``transition matrix.'' Note that every row of $T$ must sum to $1$. (A nonnegative square matrix with this property is referred to as a ``stochastic matrix''.)
-\item Assume that the ``emission distributions'' $\varepsilon_i(x_t) = p(x_t \mid Z_t = i)$ do not depend on the time index $t$. While we assume the $Z$'s are discrete, the $X$'s may be either discrete or continuous, and may also be multivariate.
-\item The ``initial distribution'' $\pi$ is the distribution of $Z_1$, that is, $\pi(i) = \Pr(Z_1 = i)$.
+\item Assume that the ``transition probabilities'' $T_{i j} = \Pr(Z_{t +1} = j \mid Z_t = i)$ do not depend on the time index $t$. This assumption is referred to as ``time-homogeneity.'' The $m \times m$  matrix $T$ in which entry $(i,j)$ is $T_{i j}$ is referred to as the ``transition matrix.'' Note that every row of $T$ must sum to $1$. (A nonnegative square matrix with this property is referred to as a ``stochastic matrix''.)
+\item Assume that the ``emission distributions'' $\epsilon_i(x_t) = p(x_t \mid Z_t = i)$ do not depend on the time index $t$. While we assume the $Z$'s are discrete, the $X$'s may be either discrete or continuous, and may also be multivariate.
+\item The ``initial distribution'' $\pi$ is the distribution of $Z_1$, that is, $\pi_i = \Pr(Z_1 = i)$.
 \end{itemize}
 
 \subsection{Example}
@@ -102,7 +102,7 @@ where $\mu = (-1,1)$ and $\sigma = (1,1)$.
 
 \begin{itemize}
 \item There are three main algorithms used for inference in HMMs: the Viterbi algorithm, the forward-backward algorithm, and the Baum--Welch algorithm.
-\item In the Viterbi algorithm and the forward-backward algorithm, it is assumed that all of the parameters are known---in other words, the initial distribution $\pi$, transition matrix $T$, and emission distributions $\varepsilon_i$ are all known.
+\item In the Viterbi algorithm and the forward-backward algorithm, it is assumed that all of the parameters are known---in other words, the initial distribution $\pi$, transition matrix $T$, and emission distributions $\epsilon_i$ are all known.
 \item The Viterbi algorithm is an efficient method of finding a sequence $z_1^*,\ldots,z_n^*$ with maximal probability given $x_1,\ldots,x_n$, that is, finding a\footnote{The $\argmax$ is the set of maximizers, i.e., $x^* \in \argmax_x f(x)$ means that $f(x^*) = \max_x f(x)$.}
 $$ z_{1:n}^* \in \argmax_{z_{1:n}} p(z_{1:n} | x_{1:n}). $$
 Naively maximizing over all sequences would take order $n m^n$ time, whereas the Viterbi algorithm only takes $n m^2$ time.
@@ -111,8 +111,9 @@ Naively maximizing over all sequences would take order $n m^n$ time, whereas the
 \item $\Pr(Z_t = i \mid x_{1:n})$ for each $i$ and each $t$,
 \item $\Pr(Z_t = i, Z_{t+1}=j \mid x_{1:n})$ for each $i,j$ and each $t$,
 \item $\Pr(Z_t \neq Z_{t+1} \mid x_{1:n})$ for each $t$,
-\item etc.
+\item etc.,
 \end{itemize}
+and it also allows you to sample from the distribution on $z_{1:n}$ given $x_{1:n}$.
 \item The Baum--Welch algorithm is a method of estimating the parameters of an HMM (the initial distribution, transition matrix, and emission distributions), using expectation-maximization and the forward-backward algorithm.
 \item Historical fun facts:
 \begin{itemize}
@@ -122,7 +123,7 @@ Naively maximizing over all sequences would take order $n m^n$ time, whereas the
 \end{itemize}
 
 
-\section{Viterbi algorithm}
+\section[Viterbi algorithm (for optimal sequence recovery)]{Viterbi algorithm}
 
 \begin{itemize}
 \item Before we start, note the following facts. If $c \geq 0$ and $f(x) \geq 0$, then $\max_x c f(x) = c \max_x f(x)$ and $\argmax_x c f(x) = \argmax_x f(x)$. Also note that $\max_{x,y} f(x,y) = \max_x \max_y f(x,y)$.
@@ -212,9 +213,233 @@ $$ \alpha_j(z_j) \in \argmax_{z_{j-1}} \Big(f_{j-1}(z_{j-1}) + \ell(z_j | z_{j-1
 
 
 
-\section{Forward-backward algorithm}
+\section[Forward-backward algorithm (for probabilistic inference)]{Forward-backward algorithm}
 
-(to do)
+\begin{itemize}
+\item Just as in the Viterbi algorithm, in the forward-backward algorithm, it is assumed that the initial distribution $\pi$, the transition matrix $T$, and the emission distributions $\epsilon_i$, are known.
+\item The structure of the algorithm is very similar to the first part of the Viterbi algorithm, except that it involves sums instead of maxs. 
+\item Our derivation of the algorithm will necessarily involve a lot of notation and indices, and may appear to be complicated, but despite appearances, it is actually very simple.  The details of the algorithm are not important---what is important is to understand how the algorithm is derived.
+\item So, how is the algorithm derived?  To me, the simplest way to  think about it is to ask the question: How can we efficiently compute the normalization constant? In this case, since $p(z_{1:n} | x_{1:n}) = p(x_{1:n},z_{1:n})/p(x_{1:n})$, and $p(x_{1:n},z_{1:n})$ is easy to compute, the normalization constant is $p(x_{1:n})$. The key is to look at the expression for the normalization constant, and try to find recursive formulas that would enable you to compute it efficiently. Typically this involves summing over variables sequentially.
+\item For some reason, it seems that for a wide range of inferential problems, once you know how to efficiently compute the normalization constant, you have ``cracked'' the problem, and can compute pretty much anything you want. This is especially true in dynamic programming.
+\item The forward-backward algorithm consists of two parts:
+\begin{enumerate}
+\item In the forward algorithm, we sum over $z_1,z_2,\ldots,z_n$, in that order, and derive a recursion for computing $p(x_{1:j},z_j)$ for each $z_j = 1,\ldots,m$ and each $j = 1,\ldots,n$.
+\item In the backward algorithm, we sum over $z_n,z_{n -1},\ldots,z_1$, in that order, and derive a recursion for computing $p(x_{j +1:n} | z_j)$ for each $z_j = 1,\ldots,m$ and each $j = 1,\ldots,n$.
+\end{enumerate}
+\item There are multiple ways of defining the forward and backward algorithms, all of which are essentially equivalent. So, the details may vary from source to source.
+\item The forward and backward algorithms each take order $n m^2$ time.
+\item Once we have our hands on $p(x_{1:j},z_j)$ and $p(x_{j+1:n} | z_j)$ for each $z_j$ and each $j$, we can compute lots of stuff, such as
+$$p(z_j | x_{1:n}) \propto p(x_{1:n},z_j) = p(x_{1:j},z_j) p(x_{j+1:n} | z_j)$$
+(here, we are using the conditional independence properties implied by the undirected graphical model) and
+\begin{align*}
+p(z_j,z_{j+1} | x_{1:n}) &\propto p(x_{1:n},z_j,z_{j+1}) \\
+& = p(x_{1:j},z_j) p(z_{j+1} | z_j) p(x_{j+1} | z_{j+1}) p(x_{j+2:n} | z_{j+1}),
+\end{align*}
+which are used in the Baum--Welch algorithm. These can also be used to sample from $p(z_{1:n} |x_{1:n})$, by first sampling from $p(z_1 | x_{1:n})$, then from $p(z_{j+1} | z_j,x_{1:n})$ for each $j = 1,\ldots,n -1$. (Note that $p(z_{j+1} | z_j,x_{1:n})$ can be easily computed from $p(z_j,z_{j+1} | x_{1:n})$.)
+\end{itemize}
+
+
+\subsection{Forward algorithm}
+
+\begin{itemize}
+\item To derive the forward algorithm, we will write out the expression for $p(x_{1:n})$, rewrite it in terms of a sequence of sums over $z_1,\ldots,z_n$, and identify certain recursive formulas.
+\item First, define $s_1(z_1) = p(z_1) p(x_1 | z_1)$, for reasons that will become clear shortly. 
+Then the joint distribution factors as
+$$ p(x_{1:n},z_{1:n}) = s_1(z_1) p(z_2 | z_1) p(x_2 | z_2) \prod_{t = 3}^n p(z_t | z_{t -1}) p(x_t | z_t), $$
+and
+\end{itemize}
+\begin{align*}
+p(x_{1:n}) & = \sum_{z_{1:n}} p(x_{1:n},z_{1:n})\\
+& = \sum_{z_{2:n}} \Big(\underbrace{\sum_{z_1} s_1(z_1) p(z_2 | z_1) p(x_2 | z_2)}_{\textstyle \text{call this } s_2(z_2)}\Big) \prod_{t = 3}^n p(z_t | z_{t -1}) p(x_t | z_t)\\
+& = \sum_{z_{3:n}} \Big(\underbrace{\sum_{z_2} s_2(z_2) p(z_3 | z_2) p(x_3 | z_3)}_{\textstyle \text{call this } s_3(z_3)}\Big) \prod_{t = 4}^n p(z_t | z_{t -1}) p(x_t | z_t)\\
+&~~\vdots\\
+& = \sum_{z_{j:n}} \Big(\underbrace{\sum_{z_{j-1}} s_{j-1}(z_{j-1}) p(z_j | z_{j-1}) p(x_j | z_j)}_{\textstyle \text{call this } s_j(z_j)}\Big) \prod_{t = j+1}^n p(z_t | z_{t -1}) p(x_t | z_t)\\
+&~~\vdots\\
+& = \sum_{z_n} s_n(z_n).
+\end{align*}
+\begin{itemize}
+\item This suggests the following algorithm:
+\begin{enumerate}
+\item For each $z_1 = 1,\ldots,m$, compute $s_1(z_1) = p(z_1) p(x_1 | z_1)$.
+\item For each $j = 2,\ldots,n$, for each $z_j = 1,\ldots,m$, compute
+$$ s_j(z_j) = \sum_{z_{j -1}} s_{j -1}(z_{j -1}) p(z_j | z_{j -1}) p(x_j | z_j). $$
+\item $p(x_{1:n}) = \sum_{z_n} s_n(z_n)$.
+\end{enumerate}
+\item In theory, this allows us to compute the normalization constant in order $n m^2$ time (although as in the case of the Viterbi algorithm, there are arithmetic underflow/overflow issues---stay tuned).
+\item The real utility of the algorithm, though, is not that it allows us to compute the normalization constant, but that it gives us the intermediate quantities $s_j(z_j)$. How can we interpret these quantities? If you think about how they are defined, and recall the directed graphical model, it's pretty straightforward to see that
+$$ s_j(z_j) = \sum_{z_{1:j -1}} p(x_{1:j},z_{1:j}) = p(x_{1:j},z_j). $$
+\item As described earlier, when these are combined with the results of the backward algorithm, they can be used to compute many other useful things.
+\item Additionally, if we are interested in inferring the value of $z_j$ based on the observations $x_{1:j}$ (i.e., ``online'' prediction), this can be done using the results of the forward algorithm, since
+$$ p(z_j | x_{1:j}) \propto p(x_{1:j},z_j) = s_j(z_j). $$
+\item Similarly, we could predict $x_{j +1}$ given $x_{1:j}$ using
+\begin{align*}
+p(x_{j +1} | x_{1:j}) &\propto p(x_{1:j},x_{j +1}) = \sum_{z_j,z_{j +1}} p(x_{1:j},x_{j +1},z_j,z_{j +1})\\
+& = \sum_{z_j,z_{j +1}} p(x_{1:j},z_j) p(z_{j +1} | z_j) p(x_{j +1} | z_{j +1}).
+\end{align*}
+\end{itemize}
+
+\subsection{Backward algorithm}
+\begin{itemize}
+\item The backward algorithm is derived similarly to the forward algorithm, except that we sum the variables in the reverse order, $z_n,\ldots,z_1$.
+\item This leads to the following algorithm (I will leave the derivation to you):
+\begin{enumerate}
+\item For each $z_n = 1,\ldots,m$, define $r_n(z_n) = 1$.
+\item For each $j = n -1,n -2,\ldots,1$, for each $z_j = 1,\ldots,m$, compute
+$$ r_j(z_j) = \sum_{z_{j +1}} p(z_{j+1} | z_j) p(x_{j+1} | z_{j +1}) r_{j +1}(z_{j +1}). $$
+\item $p(x_{1:n}) = \sum_{z_1} p(z_1)p(x_1 | z_1) r_1(z_1)$
+\end{enumerate}
+\item This takes order $n m^2$ time.
+\item What is the interpretation of the values $r_j(z_j)$?  Similarly to before, using the directed graphical model,
+$$ r_j(z_j) = \sum_{z_{j +1:n}} p(x_{j+1:n},z_{j+1:n} | z_j) = p(x_{j +1:n} | z_j). $$
+\item As in the case of the Viterbi algorithm, both the forward and backward algorithm suffer from the same issue with arithmetic underflow/overflow.  As a consequence, in practice, it is necessary to work with log values. We address this next.
+\end{itemize}
+
+
+\subsection{The log-sum-exp trick}
+
+\begin{itemize}
+\item In practice, naively implementing the forward and backward algorithms as described above will not work, due to arithmetic underflow or overflow.
+\item As with the Viterbi algorithm, the solution is to use logs, but things are a bit trickier now.  In the Viterbi algorithm, we were able to interchange the log and the max, but in the forward and backward algorithms, we cannot interchange the log and the sum.
+\item For example, in the case of the forward algorithm, if we define $g_j(z_j) = \log s_j(z_j)$, then
+\begin{align*}
+g_j(z_j) & = \log s_j(z_j) = \log \sum_{z_{j -1}} s_{j -1}(z_{j -1}) p(z_j | z_{j -1}) p(x_j | z_j)\\
+& = \log \sum_{z_{j -1}} \exp \big(g_{j -1}(z_{j -1}) + \ell(z_j | z_{j -1}) + \ell(x_j | z_j) \big)
+\end{align*}
+denoting $\ell = \log p$ as before.
+\item The issue is that $g_{j -1}(z_{j -1}) + \ell(z_j | z_{j -1}) + \ell(x_j | z_j)$ is typically going to have very large magnitude (usually negative, but possibly positive), say, $-5000$ or so, and when we try to compute $\exp(-5000)$, most programming languages will consider this to be exactly equal to $0$. 
+\item The solution is to use what is sometimes called the ``log-sum-exp trick''.  To simplify the notation a bit, let's suppose we would like to compute $\log \sum_{i = 1}^m \exp(a_i)$.  Note that for any $b \in \R$,
+\begin{align*}
+\log \sum_{i = 1}^m \exp(a_i) 
+&= \log \sum_{i = 1}^m \exp(a_i-b)\exp(b)\\
+&= \log \Big(\exp(b)\sum_{i = 1}^m \exp(a_i-b)\Big)\\
+&= b + \log \sum_{i = 1}^m \exp(a_i-b).
+\end{align*}
+The key is to choose $b = \max_i a_i$.  Then, even if all of the $a_i$'s have large magnitude, at least some of the shifted values $a_i - b$ will not result in arithmetic underflow/overflow when computing $\exp(a_i - b)$, and it turns out that this is enough to resolve the issue very satisfactorily.
+\item For example, if $a_1 = -3060$, $a_2 = -3056$, and $a_3 = -3071$, we will have $b = -3056$, so 
+$$ b + \log \sum_{i = 1}^m \exp(a_i-b) = -3056 + \log \big(\exp(-4) + \exp(0) + \exp(-15)),$$
+which is no problem to compute.
+\item It can (and usually will) happen that for some $i$'s, $a_i-b$ will be a large negative number.  For instance, suppose that in the example above we had $a_3 = -3656$. Then the third term in the sum will be $\exp(-600)$, which the computer will usually treat as exactly $0$. However, the other two terms will still be fine, and the error introduced will be negligible---the error will be on the order of $\exp(-600)$.  I'd say that's close enough, wouldn't you?
+\end{itemize}
+
+
+\section[Baum--Welch algorithm (for HMM parameter estimation)]{Baum--Welch algorithm}
+
+\begin{itemize}
+\item So far, we have been assuming that all of the HMM parameters are known (the initial distribution $\pi$, the transition matrix $T$, and the emission distributions $\epsilon_i$).
+\item The Baum--Welch algorithm provides a way to estimate these parameters. Baum--Welch is a special case of a general class of algorithms referred to as ``expectation-maximization'', or EM, for short.
+\item Baum--Welch is an iterative algorithm in which the forward and backward algorithms are used at each iteration.
+\end{itemize}
+
+\subsection{Expectation-maximization}
+
+\begin{itemize}
+\item  The goal of EM is to find a maximum likelihood estimate (MLE) or maximum a posteriori (MAP) estimate in models involving hidden/latent/unobserved variables/data.
+\item The tricky thing about models with hidden variables is that the likelihood is often quite complicated and multimodal, making it difficult to maximize.
+\item Even with EM, we are not guaranteed to find a global maximum. However, the advantage of EM over standard optimization routines is that it exploits the structure of the model in a way that make the optimization computationally efficient.
+\item EM is designed for cases in which the ``complete data'' (that is, the observed data along with the hidden data) is modeled as an exponential family. It turns out that this is quite common, and consequently, EM is a popular technique for maximum likelihood estimation in complex models.
+\end{itemize}
+
+\subsubsection{The EM algorithm}
+\begin{itemize}
+\item Observed data: $x = (x_1,\ldots,x_n)$.
+\item Model: $(X,Z) \sim p_\theta(x,z)$. Here, $z$ represents some collection of unobserved variables (for example, in an HMM, $z = (z_1,\ldots,z_n)$ represents the hidden states). EM works best when $p_\theta(x,z)$ is an exponential family.
+\item Goal: Find $\theta_\text{MLE} \in \argmax_\theta p_\theta(x)$, where $p_\theta(x) = \sum_z p_\theta(x,z)$. We will assume that $Z$ is discrete.
+\item Algorithm:
+\begin{enumerate}
+\item Initialize $\theta_1$.
+\item For $k = 1,2,\ldots$ until some convergence criterion is met,
+\begin{enumerate}
+\item E-step: Compute the function
+$$Q(\theta,\theta_k) = \E_{\theta_k} \big(\log p_\theta(X,Z) \mid X = x \big) = \sum_z \big( \log p_\theta(x,z) \big) p_{\theta_k}(z | x).$$
+\item M-step: Solve for $\theta_{k +1} \in \argmax_\theta Q(\theta,\theta_k)$.
+\end{enumerate}
+\end{enumerate}
+\item In practice, we will be able to represent $Q(\theta,\theta_k)$ analytically as a function of $\theta$, once we have computed certain coefficients that depend on $\theta_k$ and $x$. Furthermore, we will often be able to analytically maximize $Q(\theta,\theta_k)$.
+\item It is usually a good idea to introduce some randomization into the initialization, since hand-picked values of $\theta_1$ will sometimes cause EM to get stuck.
+\item The ``E'' in E-step stands for expectation, and the ``M'' in M-step stands for maximization.
+\end{itemize}
+
+\subsubsection{Pros and cons}
+\begin{itemize}
+\item Nice features of EM:
+\begin{itemize}
+\item We are guaranteed that $p_{\theta_{k +1}}(x) \geq p_{\theta_k}(x)$ for each $k$, in other words, the likelihood of $\theta_{k +1}$ is guaranteed to be at least as high as the likelihood of $\theta_k$.
+\item The algorithm tends to work well in practice.
+\end{itemize}
+\item Unfortunate features of EM:
+\begin{itemize}
+\item The algorithm is not guaranteed to converge to a global maximum.
+\item Maximum likelihood can ``overfit''. A partial solution to this is that EM can be modified to try to find a MAP estimate instead of an MLE.
+\item EM can be slow to converge. There are variations and extensions of the algorithm to improve the convergence rate.
+\item EM is specialized for models in which $p_\theta(x,z)$ is an exponential family.
+\end{itemize}
+\end{itemize}
+
+\subsection{Baum--Welch (EM for HMMs)}
+
+\begin{itemize}
+\item In an HMM, the parameter $\theta$ specifies $\pi$, $T$, and $\epsilon_i$ for each $i$. Let's suppose that the emission distribution $\epsilon_i(x)$ belongs to some family of distributions $f_{\varphi_i}(x)$ with parameter $\varphi_i$ --- for example, if the emission distributions are normal, then we could define $\varphi_i = (\mu_i,\sigma_i^2)$ and $\epsilon_i(x) = f_{\varphi_i}(x) = \N(x | \mu_i,\sigma_i^2)$. Recall that $\pi_i = \Pr(Z_1 = i)$ and $T_{i j} = \Pr(Z_{t +1} = j \mid Z_t = i)$. 
+\item With these conventions, the HMM is parameterized by $\theta = (\pi,T,\varphi)$, where $\varphi = (\varphi_1,\ldots,\varphi_m)$.
+\item We will assume that there are no functional relationships among $\pi$, $T$, and $\varphi_1,\ldots,\varphi_m$ (so that we can maximize with respect to each of them separately).
+\end{itemize}
+
+\subsubsection{The E-step}
+\begin{itemize}
+\item In the E-step, we need to compute $Q(\theta,\theta_k)$. Let's take a closer look at this to see how we might do it.  Recall that:
+$$Q(\theta,\theta_k) = \E_{\theta_k} \big( \log p_\theta(X,Z) \mid X = x \big). $$
+\item By the factorization implied by the directed graphical model for an HMM,
+\begin{align*}
+\log p_\theta(x,z) & = \log p_\theta(z_1) + \sum_{t = 2}^n \log p_\theta(z_t | z_{t -1}) + \sum_{t = 1}^n \log p_\theta(x_t | z_t)\\
+& = \sum_{i = 1}^m \1(z_1 = i) \log \pi_i + \sum_{t = 2}^n \sum_{i = 1}^m \sum_{j = 1}^m \1(z_{t -1} = i,z_t = j) \log T_{i j} \\
+&~~~~ + \sum_{t = 1}^n \sum_{i = 1}^m \1(z_t = i) \log f_{\varphi_i}(x_t).
+\end{align*}
+\item The only places where $z$ appears in this expression are in the indicator functions, so when we take the expectation of $Z$ given $X = x$, the expectation moves through and hits only these indicators. Further, the expectation of an indicator function is equal to the probability of the event in the indicator---for example, $\E_{\theta_k} \big( \1(Z_t = i) \mid X = x \big) = \Pr_{\theta_k}(Z_t = i\mid X = x)$. Consequently,
+\begin{align*}
+Q(\theta,\theta_k) & = 
+\sum_{i = 1}^m \Pr_{\theta_k}(Z_1 = i \mid x) \log \pi_i + \sum_{t = 2}^m \sum_{i = 1}^m \sum_{j = 1}^m \Pr_{\theta_k}(Z_{t -1} = i,Z_t = j \mid x) \log T_{i j} \\
+&~~~~ + \sum_{t = 1}^n \sum_{i = 1}^m \Pr_{\theta_k}(Z_t = i \mid x) \log f_{\varphi_i}(x_t).
+\end{align*}
+\item To simplify the notation, let's define
+\begin{align*}
+\gamma_{t i}& = \Pr_{\theta_k}(Z_t = i \mid x)\\
+\beta_{t i j} & = \Pr_{\theta_k}(Z_{t -1} = i,Z_t = j \mid x).
+\end{align*}
+\item With this notation, we have
+$$ Q(\theta,\theta_k) = \sum_{i = 1}^m \gamma_{1 i} \log \pi_i + \sum_{t = 2}^n \sum_{i,j = 1}^m \beta_{t i j} \log T_{i j} + \sum_{t = 1}^n \sum_{i = 1}^m \gamma_{t i} \log f_{\varphi_i}(x_t). $$
+\item Now, if we could compute the $\gamma$'s and $\beta$'s, then we would have a nice analytical expression for $Q(\theta,\theta_k)$  (as a function of $\theta$). How can we compute the $\gamma$'s and $\beta$'s? Well, do they look familiar at all? That's right, they are precisely the quantities that we saw earlier could be computed using the results of the forward-backward algorithm! Consequently, for any given $\theta_k$, we can use the forward-backward algorithm to efficiently compute the $\gamma$'s and $\beta$'s. 
+\end{itemize}
+
+\subsubsection{The M-step}
+\begin{itemize}
+\item For the M-step, we need to find a value of $\theta$ maximizing $Q(\theta,\theta_k)$.
+\item Fortunately, it turns out that we can often do this analytically. To fully justify all of the steps below, we would need to establish concavity and possibly other regularity conditions, but we will ignore these details and just focus on the big picture for now.
+\item First, to maximize with respect to $\varphi_i$, if the family $(f_{\varphi})$ is sufficiently nice (and often it is), we will be able to simply take the gradient with respect to $\varphi_i$, set it equal to zero, and solve for $\varphi_i$. In other words, find the value of $\varphi_i$ such that
+$$ 0 = \nabla_{\!\varphi_i} Q(\theta,\theta_k) = \sum_{t = 1}^n  \gamma_{t i} \big(\nabla_{\!\varphi_i} \log f_{\varphi_i}(x_t)\big). $$
+Note that the derivative kills off all the terms in our expression for $Q(\theta,\theta_k)$ except for $\sum_{t = 1}^n \gamma_{t i} \log f_{\varphi_i}(x_t)$. The value of $\varphi_i$ satisfying this equation can be thought of as a weighted MLE, in which data point $x_t$ has weight $\gamma_{t i}$.
+\item Next, consider $\pi =(\pi_1,\ldots,\pi_m)$. Things are slightly trickier now, since we need to maximize subject to the constraint that $ \sum_{i = 1}^m\pi_i = 1$. Fortunately, we can do this analytically using the method of Lagrange multipliers, as follows. Denoting the Lagrange multiplier by $\lambda$, we set the derivative of the Lagrangian equal to zero, apply the constraint, and solve for $\pi$:
+\begin{align*}
+& 0 ={\partial \over \partial \pi_i} \Big(Q(\theta,\theta_k) - \lambda \sum_{j = 1}^m \pi_j \Big) = {\gamma_{1 i} \over \pi_i}- \lambda\\
+\Longrightarrow\quad & \lambda \pi_i = \gamma_{1 i} \quad\Longrightarrow\quad \lambda = \lambda \sum_{i = 1}^m \pi_i = \sum_{i = 1}^m \gamma_{1 i},
+\end{align*}
+therefore,
+$$\pi_i = \frac{\gamma_{1 i}}{\sum_{j = 1}^m \gamma_{1 j}}.$$
+\item Finally, for $T$, we need to maximize subject to the constraint that the rows sum to~$1$, in other words, $\sum_{j = 1}^m T_{i j} = 1$ for each $i$. As with $\pi$, we can do this analytically using Lagrange multipliers. If you work this out, you will get
+$$ T_{i j} = \frac{\sum_{t = 2}^n \beta_{t i j}}{\sum_{t = 2}^n \sum_{j = 1}^m \beta_{t i j}} = \frac{\sum_{t = 2}^n \beta_{t i j}}{\sum_{t = 1}^{n -1} \gamma_{t i}}. $$
+\end{itemize}
+
+\subsubsection{Altogether now, with feeling}
+\begin{itemize}
+\item Putting all these pieces together, then, the Baum--Welch algorithm proceeds as follows:
+\begin{enumerate}
+\item Randomly initialize $\pi$, $T$, and $ \varphi = (\varphi_1,\ldots,\varphi_m)$.
+\item Iteratively repeat the following two steps, until convergence:
+\begin{enumerate}
+\item E-step: Compute the $\gamma$'s and $\beta$'s using the forward-backward algorithm, given the current values of $\pi$, $T$, $\varphi$.
+\item M-step: Update $\pi$, $T$, and $\varphi$ using the formulas above involving the $\gamma$'s and $\beta$'s.
+\end{enumerate}
+\end{enumerate}
+\end{itemize}
+
 
 
 
