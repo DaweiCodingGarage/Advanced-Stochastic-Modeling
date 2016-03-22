@@ -52,7 +52,7 @@
 
 \vspace{2em}
 
-Graphical models are a way of visually representing conditional independence properties among random variables. They are a useful tool for communicating and understanding the relationships between variables in a model, for deriving conditional independence properties of a model, and for developing inference algorithms. (Ideally, these notes would be accompanied by diagrams of graphical models, however, for now they will only provide the mathematical formulas. You will need to refer to PRML 8 or Murphy chapter 19 for examples and visualizations of graphical models themselves.)
+Graphical models are a way of visually representing conditional independence properties among random variables. A graphical model is useful for communicating and understanding the relationships between variables in a model, for deriving conditional independence properties of a model, and for developing inference algorithms. (Note: Ideally, these notes would be accompanied by diagrams of graphical models, however, for now they will only provide the mathematical formulas. You will need to refer to PRML 8 or Murphy chapter 19 for examples and visualizations of graphical models themselves.)
 
 \newpage
 
@@ -84,7 +84,7 @@ $$ p(x_1,\ldots,x_n) = \prod_{i = 1}^n p(x_i | x_{\text{pa}(i)}). $$
 \begin{itemize}
 \item Undirected graphical models (UGMs) arise naturally in physics, image analysis, spatial statistics, and biochemistry, for example. UGMs are often useful when there are a number of interacting variables that do not necessarily have a natural ordering in their dependencies.
 \item An \textit{undirected graph} is a graph in which all of the edges are undirected (i.e., have no ``arrow heads'').
-\item A \textit{clique} is a subset of vertices that is fully connected, i.e., there is an edge between every pair of vertices in the subset. (The technical term for ``fully connected'' is ``complete''.) Denote the set of all cliques by $\C$.
+\item A \textit{clique} is a subset of vertices that is fully connected, i.e., there is an edge between every pair of vertices in the subset.  Denote the set of all cliques by $\C$.
 \item A \textit{maximal clique} is a clique that is not contained in any other clique (i.e., adding any vertex would make it no longer clique). Denote the set of maximal cliques by $\C_m$.
 \item Suppose $p(x_1,\ldots,x_n)$ is a probability distribution, and $G$ is an undirected graph with vertices $1,\ldots,n$. We say that $p$ \textit{respects} $G$ if
 $$ p(x_1,\ldots,x_n) = \prod_{C \in \C_m} \varphi_C(x_C) $$
