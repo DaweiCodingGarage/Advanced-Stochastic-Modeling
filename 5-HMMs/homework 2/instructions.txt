@@ -2,7 +2,7 @@
 Background:
 Markov models and hidden Markov models are often used for modeling written text. A common way of modeling text is to consider each word to be a single observation x_t (perhaps with some preprocessing to appropriately handle punctuation, etc.). In an HMM, the hidden states z_t represent abstract concepts or word types, and they may or may not have a clear interpretation. More complex models are also frequently used to model text, especially higher-order Markov chains and probabilistic context-free grammars (PCFGs).
 
-In this exercise, you will apply a hidden Markov model to a short sample of text from a children's book, "Green Eggs and Ham", by Dr. Seuss. You will use the Baum-Welch algorithm to estimate the parameters. Using a children's book makes the problem easier, since the vocabulary size is limited, and the length of the sample is not too long. (With a larger sample of text and a larger vocabulary, a more sophisticated approach would probably be needed.)
+In this exercise, you will apply a hidden Markov model to a short sample of text resembling stories from a children's book. You will use the Baum-Welch algorithm to estimate the parameters. Using a short sample of text involving a limited vocabulary and relatively simple grammar makes the problem easier. (With a larger sample of text, larger vocabulary, and more complex grammar, a more sophisticated approach would probably be needed.)
 
 
 Data:
@@ -10,7 +10,7 @@ The file "x.txt" contains a sequence of integers x_1,...,x_n, where x_t represen
 
 
 Setup:
-The hidden values z_t belong to the set {1,...,m}, for some value of m that we will choose below.  Each observation x_t is an integer in {1,...,k} where k=71, since there are 71 distinct words occurring in the text.  There are n=964 observations, x_1,...,x_n (the text is 964 words/symbols long). For each state i=1,...,m, we model the emission distribution p(x_t | z_t=i) as an arbitrary probability vector phi_i = (phi_i1,...,phi_ik) summing to 1.
+The hidden values z_t belong to the set {1,...,m}, for some value of m that we will choose below.  Each observation x_t is an integer in {1,...,k} where k=59, since there are 59 distinct words/symbols occurring in the text.  There are n=292 observations, x_1,...,x_n (the text is 292 words/symbols long). For each state i=1,...,m, we model the emission distribution p(x_t | z_t=i) as an arbitrary probability vector phi_i = (phi_i1,...,phi_ik) summing to 1.
 
 
 Exercises:
