@@ -1,0 +1,167 @@
+\documentclass[12pt]{article} 
+\input{../../custom}
+\usepackage[margin=1in]{geometry}
+
+
+\begin{document}
+\begin{center}
+\large\textbf{STA531 Midterm Exam 2}
+\end{center}
+
+\small
+
+\subsection*{Instructions}
+\begin{itemize}
+    \item Write your name, NetID, and signature below.
+    \item If you need extra space for any problem, continue on the back of the page.
+\end{itemize}
+
+\subsection*{Community Standard}
+To uphold the Duke Community Standard:
+\begin{itemize}
+\item I will not lie, cheat, or steal in my academic endeavors;
+\item I will conduct myself honorably in all my endeavors; and
+\item I will act if the Standard is compromised.
+\end{itemize}
+I have adhered to the Duke Community Standard in completing this exam.
+
+\vspace{1em}
+\begin{itemize}
+    \setlength\itemsep{1em}
+    \item[] Name: \hrulefill
+    \item[] NetID: \hrulefill
+    \item[] Signature: \hrulefill
+\end{itemize}
+
+\subsection*{Score}
+%(For TA use only --- leave this section blank.)
+
+\vspace{1em}
+%\begin{minipage}{1.0\textwidth}
+\begin{enumerate}
+    \setlength\itemsep{1em}
+    \item \line(1,0){100}
+    \item \line(1,0){100}
+    \item \line(1,0){100}
+    \item \line(1,0){100}
+        \vspace{1em}
+    \item[] Overall: \line(1,0){200}
+\end{enumerate}
+
+\newpage
+\subsection*{List of common distributions}
+% todo: any others?
+\begin{itemize}
+    \setlength\itemsep{1em}
+    \item[] $\displaystyle \Geometric(x|\theta) = \theta(1-\theta)^x\,\1(x\in\{0,1,2,\ldots\})$ for $0<\theta<1$
+    \item[] $\displaystyle \Bernoulli(x|\theta) = \theta^x(1-\theta)^{1-x}\,\1(x\in\{0,1\})$ for $0<\theta<1$
+    \item[] $\displaystyle \Binomial(x|n,\theta) = {n\choose x}\theta^x(1-\theta)^{n-x}\,\1(x\in\{0,1,\ldots,n\})$ for $0<\theta<1$
+    \item[] $\displaystyle \Poisson(x|\theta) = \frac{e^{-\theta}\theta^x}{x!}\,\1(x\in\{0,1,2,\ldots\})$ for $\theta>0$
+    \item[] $\displaystyle \Exp(x|\theta) = \theta e^{-\theta x}\,\1(x>0)$ for $\theta>0$
+    \item[] $\displaystyle \Uniform(x|a,b) = \frac{1}{b-a}\,\1(a<x<b)$ for $a<b$
+    \item[] $\displaystyle \Ga(x|a,b) = \frac{b^a}{\Gamma(a)}x^{a-1}e^{-b x}\,\1(x>0)$ for $a,b>0$
+    \item[] $\displaystyle \Pareto(x|\alpha,c) = \frac{\alpha c^\alpha}{x^{\alpha+1}}\,\1(x>c)$ for $\alpha,c>0$
+    \item[] $\displaystyle \Beta(x|a,b) = \frac{1}{B(a,b)}x^{a-1}(1-x)^{b-1}\,\1(0<x<1)$ for $a,b>0$
+    \item[] $\displaystyle \N(x|\mu,\sigma^2) = \frac{1}{\sqrt{2\pi\sigma^2}}\exp\big(-\tfrac{1}{2\sigma^2}(x-\mu)^2\big)$
+        for $\mu\in\R$, $\sigma^2>0$
+    \item[] $\displaystyle \N(x|\mu,C) = \frac{1}{(2\pi)^{d/2}|C|^{1/2}}\exp\big(-\tfrac{1}{2}(x-\mu)^\T C^{-1} (x-\mu)\big)$
+        for $\mu\in\R^d$, $C\in\R^{d\times d}$ symmetric positive definite.
+\end{itemize}
+
+\subsection*{Exponential family form}
+$$ p(x|\theta) =\exp\big(\varphi(\theta)^\T t(x)-\kappa(\theta)\big) h(x) $$
+
+\subsection*{List of special functions}
+\label{special-functions}
+\begin{itemize}
+    \setlength\itemsep{1em}
+    \item[] Beta function: $\displaystyle B(a,b) = \int_0^1 t^{a-1}(1-t)^{b-1} d t$ for $a,b>0$
+    \item[] Gamma function: $\displaystyle \Gamma(x) = \int_0^\infty t^{x-1} e^{-t} d t$ for $x>0$
+    %\item[] Log function for $a>1$: $\displaystyle \log a = \int_1^a (1/t) d t$
+\end{itemize}
+
+
+
+
+\normalsize
+\begin{enumerate}
+
+\newpage
+\item (25 points) Graphical models
+
+Suppose $(X_1,\ldots,X_8)\sim p(x_1,\ldots,x_8)$, and $p$ respects the following DAG.
+\input{figures/DGM.tex}
+\begin{enumerate}
+%\setlength\itemsep{8em}
+\item Write down the factorization of $p(x_1,\ldots,x_8)$ implied by this graph.
+\vspace{8em}
+\item For each question below, circle either Yes, No, or Indeterminate. Indeterminate means that the answer cannot be determined from the information given.  (You do not need to justify your answer.)
+\vspace{1em}
+\begin{enumerate}
+\setlength\itemsep{1em}
+\item Is $X_1 \perp X_3$? $\phantom{\mid X_4,X_5}$ \hspace{1cm}  Yes \hspace{1cm} No \hspace{1cm} Indeterminate
+\item Is $X_1 \perp X_3 \mid X_7$? $\phantom{\,X_7}$ \hspace{1cm}  Yes \hspace{1cm} No \hspace{1cm} Indeterminate
+\item Is $X_1 \perp X_3 \mid X_6$? $\phantom{\,X_6}$ \hspace{1cm}  Yes \hspace{1cm} No \hspace{1cm} Indeterminate
+\item Is $X_1 \perp X_3 \mid X_4,X_5$? \hspace{1cm}  Yes \hspace{1cm} No \hspace{1cm} Indeterminate
+\end{enumerate}
+\vspace{2em}
+\item Draw the moral graph (i.e., the moralization) of the DAG above.
+\end{enumerate}
+
+
+\newpage
+\item (25 points) Markov chains and graphical models
+
+Let's refer to the following directed graph as $G_\text{D}$:
+\input{figures/markov-directed.tex}
+Let's refer to the following undirected graph as $G_\text{U}$:
+\input{figures/markov-undirected.tex}
+Suppose $p(x_1,\ldots,x_n)$ is a probability distribution.
+\begin{enumerate}
+\item Show that if $p$ respects $G_\text{D}$, then $p$ respects $G_\text{U}$.
+\vspace{15em}
+\item Show that if $p$ respects $G_\text{U}$, then $p$ respects $G_\text{D}$.
+\end{enumerate}
+
+
+\newpage
+\item (25 points) Modeling the data collection process
+
+Doctor Drastic has each of his patients fill out a questionnaire on their first visit. One of the questions is whether or not the patient has a certain sexually transmitted disease (STD), but some of the patients might be embarrassed and might not want to answer this question. Consider the following model:
+\begin{align*}
+& \theta \sim \Beta(a,b) \\
+& Y_1,\ldots,Y_n | \theta \text{ i.i.d.} \sim \Bernoulli(\theta) \\
+&~~~~\text{(where $Y_j = 1$ if patient $j$ has the STD, and $Y_j = 0$ otherwise)}\\
+& I_j | y,\theta \sim \Bernoulli(\phi_{y_j}) \text{ for each $j = 1,\ldots,n$}\\
+&~~~~\text{(where $I_j = 1$ if patient $j$ answers the question, and $I_j = 0$ otherwise)}.
+\end{align*}
+For simplicity, suppose the parameters $\phi_0$ and $\phi_1$ are known, and suppose that if the patient answers, they always answer truthfully.  
+
+The doctor has had $n$ patients, and so far, all of them have answered the STD question (i.e., $I_j = 1$ for all $j = 1,\ldots,n$). What is the posterior on $\theta$?  Express your answer in terms of a well-known distribution.
+
+
+\newpage
+\item (25 points) Viterbi algorithm
+
+In class, in order to derive the Viterbi algorithm, we first devised an algorithm for computing $\max_{z_{1:n}} p(x_{1:n},z_{1:n})$ in which we visited the hidden variables in the ``forward'' direction: $z_1,z_2,\ldots,z_n$.
+
+Devise an algorithm for computing $\max_{z_{1:n}} p(x_{1:n},z_{1:n})$ in which the variables are visited in the ``backward'' direction: $z_n,z_{n -1},\ldots,z_1$.  (Your algorithm should take $n m^2$ time, like the forward version. You do not need to include steps for computing the argmax.)
+
+
+
+
+
+
+    
+\end{enumerate}
+
+
+
+
+\end{document}
+
+
+
+
+
+
