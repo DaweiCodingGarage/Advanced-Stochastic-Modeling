@@ -1,0 +1,74 @@
+\documentclass[12pt]{article} 
+\input{../../custom}
+\usepackage[margin=1in]{geometry}
+
+
+\begin{document}
+\begin{center}
+\large\textbf{STA531 Midterm Exam 2 Solutions}
+\end{center}
+
+\begin{enumerate}
+\item Graphical models
+
+\begin{enumerate}
+\item $p(x_1,\ldots,x_8) = p(x_1) p(x_2) p(x_3) p(x_4 | x_1,x_2) p(x_5 | x_2,x_3) p(x_6 | x_4) p(x_7 | x_4,x_5) p(x_8 | x_5)$
+\item Yes, Indeterminate, Yes, Indeterminate
+\item ~\\
+\vspace{-4ex}
+\input{figures/moral-graph.tex}
+\end{enumerate}
+
+\item Markov chains and graphical models
+
+\begin{enumerate}
+\item Suppose $p$ respect $G_\text{D}$. Then
+$$ p(x_1,\ldots,x_n) = p(x_1) \prod_{i = 1}^{n-1} p(x_{i+1} | x_i) = \prod_{i = 1}^{n-1} \varphi_i(x_i,x_{i+1}) $$
+if we define $\varphi_1(x_1,x_2) = p(x_1) p(x_2 | x_1)$ and $\varphi_i(x_i,x_{i+1}) = p(x_{i+1} | x_i)$ for $i = 2,\ldots,n-1$. The functions $\varphi_1,\varphi_2,\ldots,\varphi_{n-1}$ are nonnegative, and the maximal cliques of $G_\text{U}$ are $\{1,2 \},\{2,3 \},\ldots,\{n -1,n \}$. Therefore, $p$ respects $G_\text{U}$.
+\item Suppose $p$ respects $G_\text{U}$. Then
+$$ p(x_1,\ldots,x_n) = p(x_1)\prod_{i = 2}^n p(x_i | x_1,\ldots,x_{i -1}) = p(x_1) \prod_{i = 2}^n p(x_i | x_{i-1}) = \prod_{i = 1}^n p(x_i | x_{\mathrm{pa}(i)})
+$$
+since
+\begin{itemize}
+\item $X_i \perp X_1,\ldots,X_{i -2} \mid X_{i -1}$ by the separation criterion for undirected graphical models, because all paths from $i$ to $\{1,\ldots,i -2 \}$ pass through $i -1$, and
+\item $\mathrm{pa}(1) = \emptyset$ and $\mathrm{pa}(i) = \{i -1 \}$ for $i = 2,\ldots,n$.
+\end{itemize}
+Therefore, $p$ respects $G_\text{D}$.
+\end{enumerate}
+
+\item Modeling the data collection process
+
+As usual, the appropriate posterior on $\theta$ to use is $p(\theta | y_\text{obs},I)$, since this is the posterior obtained by conditioning on all of the observations.  Since $I_j = 1$ for all $j = 1,\ldots,n$, $\mathrm{obs}= \{1,\ldots,n \}$.  Further, the distribution of $I| y,\theta$ does not depend on $\theta$ (because $p(I | y,\theta) = \prod_{j = 1}^n \phi_{y_j}^{I_j}(1 - \phi_{y_j})^{1 - I_j} \propto_\theta 1$). Consequently, the data collection process plays no role:
+\begin{align*}
+p(\theta | y_\text{obs},I) &= p(\theta | y,I) \propto p(y,I,\theta) = p(\theta) p(y | \theta) p(I | y,\theta)\\
+& \propto_\theta p(\theta) p(y | \theta) \propto_\theta \theta^{a -1}(1 - \theta)^{b -1} \prod_{j = 1}^n \theta^{y_j}(1 - \theta)^{1 - y_j}\\
+& \propto_\theta \Beta(\theta \mid a + \textstyle\sum y_j,\, b + n - \sum y_j).
+\end{align*}
+
+\item Viterbi algorithm
+
+Define $\nu_n(z_n) = 1$ for each $z_n = 1,\ldots,m$, and denote $p(z_1) = p(z_1 | z_0)$ for notational simplicity. Then
+\begin{align*}
+\max_{z_{1:n}} p(x_{1:n},z_{1:n}) & = \max_{z_{1:n}} \prod_{t = 1}^n p(z_t | z_{t -1}) p(x_t | z_t)\\
+&~~\vdots\\
+& = \max_{z_{1:j}} \Big(\prod_{t=1}^{j} p(z_t | z_{t -1}) p(x_t | z_t) \Big) \underbrace{\max_{z_{j +1}} p(z_{j +1} | z_j) p(x_{j +1} | z_{j +1}) \nu_{j +1}(z_{j +1})}_{\textstyle\text{call this } \nu_j(z_j)}\\
+& ~~\vdots\\
+& = \max_{z_1} p(z_1) p(x_1 | z_1) \nu_1(z_1).
+\end{align*}
+Therefore, we have the following algorithm:
+\begin{enumerate}
+\item[(1)] Set $\nu_n(z_n) = 1$ for $z_n = 1,\ldots,m$.
+\item[(2)] For each $j = n -1,n -2,\ldots,1$, for each $z_j = 1,\ldots,m$, compute
+$$ \nu_j(z_j) = \max_{z_{j +1}} p(z_{j +1} | z_j) p(x_{j +1} | z_{j +1}) \nu_{j +1}(z_{j +1}). $$
+\item[(3)] Return $\max_{z_1} p(z_1) p(x_1 | z_1) \nu_1(z_1)$.
+\end{enumerate}
+(Note: If you showed that your algorithm takes $n m^2$ time, then that is great, but this was not required---as long as your algorithm actually does take $n m^2$ time, then that is sufficient.)
+\end{enumerate}
+
+\end{document}
+
+
+
+
+
+
