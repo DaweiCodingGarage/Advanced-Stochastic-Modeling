@@ -30,10 +30,37 @@ The Kalman filter is a method of estimating the current state of a dynamical sys
 \end{itemize}
 
 
-\section{Setup}
+\section{Model}
+
+\begin{itemize}
+\item The Kalman filter and smoother are based on the following probabilistic model.
+\item As in a discrete-space HMM, the sequence of observed data $x_1,\ldots,x_n$ is modeled jointly along with a sequence of hidden states $z_1,\ldots,z_n$ by a distribution that respects the graph:
+\input{figures/HMM-directed.tex}
+In other words, we assume
+$$ p(x_{1:n},z_{1:n}) = p(z_1) p(x_1 | z_1) \prod_{j = 2}^n p(z_j | z_{j -1}) p(x_j | z_j). $$
+\item However, unlike a discrete-space HMM, each hidden state $z_j$ is modeled as a continuous random variable in $\R^d$, following a multivariate normal distribution. 
+\item Specifically, the initial distribution $p(z_1)$, the transition distributions $p(z_j | z_{j-1})$ (a.k.a. the ``process model''), and the emission distributions $p(x_j | z_j)$ (a.k.a. the ``measurement model'') are assumed to be
+\begin{align*}
+& p(z_1) = \N(z_1 \mid \mu_0,V_0)\\
+& p(z_j | z_{j-1}) = \N(z_j \mid F z_{j-1},Q)\\
+& p(x_j | z_j) = \N(x_j \mid H z_j,R)
+\end{align*}
+where
+\begin{itemize}
+\item $z_j \in \R^d$ (the state of the system at time step $j$),
+\item $x_j \in \R^D$ (the measurements at time step $j$),
+\item $\mu_0 \in \R^d$ is an arbitrary vector (the initial mean, our ``best guess'' at the initial state),
+\item $V_0 \in \R^{d \times d}$ is a symmetric positive definite matrix (the initial covariance matrix, quantifying our uncertainty about the initial state),
+\item $F \in \R^{d \times d}$ is an arbitrary matrix (capturing the physics of the process, or a linear approximation thereof),
+\item $Q \in \R^{d \times d}$ is a symmetric positive definite matrix (quantifying the noise/error in the process),
+\item $H \in \R^{D \times d}$ is an arbitrary matrix (relating the measurements to the state),
+\item $R \in \R^{D \times D}$ is a symmetric positive definite matrix (quantifying the noise/error of the measurements).
+\end{itemize}
+% \item Some authors reserve the term ``HMM'' for the discrete case.
+\end{itemize}
 
 
-
+% \item As in the case of a discrete-space HMM, there is a forward algorithm (the Kalman filter) and a backward algorithm (the Rauch–Tung–Striebel smoother), except that each step involves an integral instead of a sum. Due to the multivariate normal assumption, these integrals can be computed analytically, leading to algorithms that are mathematically elegant and computationally efficient.
 
 
 
