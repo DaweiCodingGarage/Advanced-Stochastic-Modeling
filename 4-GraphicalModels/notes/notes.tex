@@ -1,41 +1,5 @@
 \documentclass[12pt]{article} 
-% Formatting
-\tolerance=1000
-\usepackage[margin=1.2in]{geometry}
-
 \input{../../custom.tex}
-
-
-% Packages
-
-% \usepackage{amssymb,latexsym}
-\usepackage{amssymb,amsfonts,amsmath,latexsym,amsthm}
-\usepackage[usenames,dvipsnames]{color}
-\usepackage[]{graphicx}
-\usepackage[space]{grffile}
-\usepackage{mathrsfs}   % fancy math font
-% \usepackage[font=small,skip=0pt]{caption}
-\usepackage[skip=0pt]{caption}
-\usepackage{subcaption}
-\usepackage{verbatim}
-\usepackage{url}
-\usepackage{bm}
-\usepackage{dsfont}
-\usepackage{extarrows}
-\usepackage{multirow}
-% \usepackage{wrapfig}
-% \usepackage{epstopdf}
-\usepackage{rotating}
-\usepackage{tikz}
-\usetikzlibrary{fit}					% fitting shapes to coordinates
-%\usetikzlibrary{backgrounds}	% drawing the background after the foreground
-
-
-% \usepackage[dvipdfm,colorlinks,citecolor=blue,linkcolor=blue,urlcolor=blue]{hyperref}
-\usepackage[colorlinks,citecolor=blue,linkcolor=blue,urlcolor=blue]{hyperref}
-%\usepackage{hyperref}
-\usepackage[authoryear,round]{natbib}
-
 
 
 \title{Graphical Models}
@@ -47,12 +11,12 @@
 \maketitle
 
 \tableofcontents
+\thispagestyle{firststyle}
 
-\blankfootnote{This work is licensed under a \href{http://creativecommons.org/licenses/by-nc-nd/4.0/}{Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License}.  Jeffrey W. Miller (2016). \textit{Lecture Notes on Advanced Stochastic Modeling}. Duke University, Durham, NC.}
 
 \vspace{2em}
 
-Graphical models are a way of visually representing conditional independence properties among random variables. A graphical model is useful for communicating and understanding the relationships between variables in a model, for deriving conditional independence properties of a model, and for developing inference algorithms. (Note: Ideally, these notes would be accompanied by diagrams of graphical models, however, for now they will only provide the mathematical formulas. You will need to refer to PRML 8 or Murphy chapter 19 for examples and visualizations of graphical models themselves.)
+Graphical models are a way of visually representing conditional independence properties among random variables. A graphical model is useful for communicating and understanding the relationships between variables in a model, for deriving conditional independence properties of a model, and for developing inference algorithms. (Note: Ideally, these notes would be accompanied by diagrams of graphical models, however, for now they will only provide the mathematical formulas. You will need to refer to Bishop chapter 8 or Murphy chapter 19 for examples and visualizations of graphical models themselves.)
 
 \newpage
 

@@ -1,41 +1,5 @@
 \documentclass[12pt]{article} 
-% Formatting
-\tolerance=1000
-\usepackage[margin=1.2in]{geometry}
-
 \input{../../custom.tex}
-
-
-% Packages
-
-% \usepackage{amssymb,latexsym}
-\usepackage{amssymb,amsfonts,amsmath,latexsym,amsthm}
-\usepackage[usenames,dvipsnames]{color}
-\usepackage[]{graphicx}
-\usepackage[space]{grffile}
-\usepackage{mathrsfs}   % fancy math font
-% \usepackage[font=small,skip=0pt]{caption}
-\usepackage[skip=0pt]{caption}
-\usepackage{subcaption}
-\usepackage{verbatim}
-\usepackage{url}
-\usepackage{bm}
-\usepackage{dsfont}
-\usepackage{extarrows}
-\usepackage{multirow}
-% \usepackage{wrapfig}
-% \usepackage{epstopdf}
-\usepackage{rotating}
-\usepackage{tikz}
-\usetikzlibrary{fit}					% fitting shapes to coordinates
-%\usetikzlibrary{backgrounds}	% drawing the background after the foreground
-
-
-% \usepackage[dvipdfm,colorlinks,citecolor=blue,linkcolor=blue,urlcolor=blue]{hyperref}
-\usepackage[colorlinks,citecolor=blue,linkcolor=blue,urlcolor=blue]{hyperref}
-%\usepackage{hyperref}
-\usepackage[authoryear,round]{natbib}
-
 
 
 \title{Hidden Markov Models}
@@ -47,8 +11,7 @@
 \maketitle
 
 \tableofcontents
-
-\blankfootnote{This work is licensed under a \href{http://creativecommons.org/licenses/by-nc-nd/4.0/}{Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License}.  Jeffrey W. Miller (2016). \textit{Lecture Notes on Advanced Stochastic Modeling}. Duke University, Durham, NC.}
+\thispagestyle{firststyle}
 
 
 \vspace{2em}
@@ -319,6 +282,7 @@ The key is to choose $b = \max_i a_i$.  Then, even if all of the $a_i$'s have la
 $$ b + \log \sum_{i = 1}^m \exp(a_i-b) = -3056 + \log \big(\exp(-4) + \exp(0) + \exp(-15)),$$
 which is no problem to compute.
 \item It can (and usually will) happen that for some $i$'s, $a_i-b$ will be a large negative number.  For instance, suppose that in the example above we had $a_3 = -3656$. Then the third term in the sum will be $\exp(-600)$, which the computer will usually treat as exactly $0$. However, the other two terms will still be fine, and the error introduced will be negligible---the error will be on the order of $\exp(-600)$.  I'd say that's close enough, wouldn't you?
+\item There is one other issue that we need to take care of when using the log-sum-exp trick. Specifically, if $b=\infty$ or $b=-\infty$, then $a_i-b = \infty-\infty$ for one or more $a_i$'s, and this will lead to NaN's in most programming languages. This is easily resolved by returning $b$ if $b\in\{-\infty,\infty\}$, and otherwise, returning $b + \log \sum_{i = 1}^m \exp(a_i-b)$.
 \end{itemize}
 
 

@@ -34,6 +34,16 @@
 %\usepackage{hyperref}
 \usepackage[authoryear,round]{natbib}
 
+\allowdisplaybreaks
+
+\usepackage[margin=1in]{geometry}
+\usepackage{fancyhdr}
+
+\fancypagestyle{firststyle}{
+   \fancyhf{}
+   \renewcommand{\footrulewidth}{0.4pt}
+   \fancyfoot[L]{\footnotesize Jeffrey W. Miller (2016). \textit{Lecture Notes on Advanced Stochastic Modeling}. Duke University, Durham, NC.\\This work is licensed under a \href{http://creativecommons.org/licenses/by-nc-nd/4.0/}{Creative Commons BY-NC-ND 4.0 International License}.}
+}
 
 %  Theorems, etc.
 
@@ -54,19 +64,6 @@
 \numberwithin{equation}{section}
 
 
-% footnote without number
-\newcommand\blankfootnote[1]{%
-  \begingroup
-  \renewcommand\thefootnote{}\footnote{#1}%
-  \addtocounter{footnote}{-1}%
-  \endgroup
-}
-\makeatletter
-\renewcommand\footnoterule{%
-  \kern-3\p@
-  \hrule\@width \textwidth
-  \kern2.6\p@}
-\makeatother
 
 % Document-specific shortcuts
 \newcommand{\btheta}{{\bm\theta}}
