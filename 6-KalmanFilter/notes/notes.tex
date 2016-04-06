@@ -16,7 +16,7 @@
 \vspace{2em}
 
 
-The Kalman filter is a method of estimating the current state of a dynamical system, given the observations so far. The underlying model is a hidden Markov model (HMM) in which everything is multivariate normal---so in particular, the hidden variables are continuous, rather than discrete. The Kalman filter is actually just the forward algorithm, except that each step can be computed analytically due to the magic of Gaussians. As one might expect, there is also a backward algorithm (or something very similar), and this is referred to as the Kalman smoother.  The Kalman smoother allows one to refine estimates of previous states, in the light of later observations. As in the case of discrete-space HMMs, the results of the Kalman filter and smoother can also be combined with expectation-maximization to estimate the parameters of the model. I think it is fair to say that the Kalman filter is one of the most important algorithms of the 20th century.
+The Kalman filter is a method of estimating the current state of a dynamical system, given the observations so far. The underlying model is a hidden Markov model (HMM) in which everything is multivariate normal---so in particular, the hidden variables are continuous, rather than discrete. The Kalman filter is actually just the forward algorithm, except that each step can be computed analytically due to the magic of Gaussians. As one might expect, there is also a backward algorithm (or something very similar), and this is referred to as the smoother algorithm.  The smoother allows one to refine estimates of previous states, in the light of later observations. As in the case of discrete-state HMMs, the results of the Kalman filter and smoother can also be combined with expectation-maximization to estimate the parameters of the model. I think it is fair to say that the Kalman filter is one of the most important algorithms of the 20th century.
 
 \newpage
 
@@ -25,7 +25,7 @@ The Kalman filter is a method of estimating the current state of a dynamical sys
 \begin{itemize}
 \item Around 1960, the United States and the Soviet Union were developing rocket technology for their space programs (and, no coincidence, for intercontinental ballistic missiles as well).
 \item At the same time, Rudolph Kalman in the US and Ruslan Stratonovich in the USSR were developing methods for efficiently and accurately estimating the state of a dynamical system by accumulating noisy measurements from many different instruments over time. Kalman's method would later become known as the Kalman filter, and is a special case of Stratonovich's method.  Early contributions were also made by Thorvald Thiele, Peter Swerling, and Richard Bucy.
-\item When Kalman visited NASA Ames Research Center, Stanley Schmidt realized the applicability of Kalman's work to the problem of navigation and control of aircraft and spacecraft, and the Kalman filter became an integral part of the Apollo navigation computer.
+\item When Kalman visited NASA Ames Research Center, Stanley Schmidt realized the utility of Kalman's work for navigation and control of aircraft and spacecraft, and the Kalman filter became an integral part of the Apollo navigation computer.
 \item Today, essentially all high-performance navigation systems use a Kalman filter or some variant thereof.  The method is used in rockets, missiles, spacecraft including the international space station, unmanned aerial vehicles, ground robots, and recently, self-driving cars.
 \end{itemize}
 
@@ -34,11 +34,11 @@ The Kalman filter is a method of estimating the current state of a dynamical sys
 
 \begin{itemize}
 \item The Kalman filter and smoother are based on the following probabilistic model.
-\item As in a discrete-space HMM, the sequence of observed data $x_1,\ldots,x_n$ is modeled jointly along with a sequence of hidden states $z_1,\ldots,z_n$ by a distribution that respects the graph:
+\item Like a discrete-state HMM, the sequence of observations $x_1,\ldots,x_n$ is modeled jointly along with a sequence of hidden states $z_1,\ldots,z_n$ by a distribution that respects the graph:
 \input{figures/HMM-directed.tex}
 In other words, we assume
 $$ p(x_{1:n},z_{1:n}) = p(z_1) p(x_1 | z_1) \prod_{j = 2}^n p(z_j | z_{j -1}) p(x_j | z_j). $$
-\item However, unlike a discrete-space HMM, each hidden state $z_j$ is modeled as a continuous random variable in $\R^d$, following a multivariate normal distribution. 
+\item However, unlike a discrete-state HMM, each hidden state $z_j$ is modeled as a continuous random variable in $\R^d$ with a multivariate normal distribution. 
 \item Specifically, the initial distribution $p(z_1)$, the transition distributions $p(z_j | z_{j-1})$ (a.k.a. the ``process model''), and the emission distributions $p(x_j | z_j)$ (a.k.a. the ``measurement model'') are assumed to be
 \begin{align*}
 & p(z_1) = \N(z_1 \mid \mu_0,V_0)\\
@@ -51,26 +51,214 @@ where
 \item $x_j \in \R^D$ (the measurements at time step $j$),
 \item $\mu_0 \in \R^d$ is an arbitrary vector (the initial mean, our ``best guess'' at the initial state),
 \item $V_0 \in \R^{d \times d}$ is a symmetric positive definite matrix (the initial covariance matrix, quantifying our uncertainty about the initial state),
-\item $F \in \R^{d \times d}$ is an arbitrary matrix (capturing the physics of the process, or a linear approximation thereof),
-\item $Q \in \R^{d \times d}$ is a symmetric positive definite matrix (quantifying the noise/error in the process),
+\item $F \in \R^{d \times d}$ is an arbitrary matrix (modeling the physics of the process, or a linear approximation thereof),
+\item $Q \in \R^{d \times d}$ is a symmetric positive definite matrix (quantifying the noise/error in the process that is not captured by $F$),
 \item $H \in \R^{D \times d}$ is an arbitrary matrix (relating the measurements to the state),
 \item $R \in \R^{D \times D}$ is a symmetric positive definite matrix (quantifying the noise/error of the measurements).
 \end{itemize}
+\item The model can easily be extended to handle time-dependence in $F,Q,H,$ and $R$, by simply replacing them with $F_j,Q_j,H_j,$ and $R_j$ in the expressions above. The Kalman filter and smoother algorithms can easily be modified to handle this generalization.
 % \item Some authors reserve the term ``HMM'' for the discrete case.
 \end{itemize}
 
 
-% \item As in the case of a discrete-space HMM, there is a forward algorithm (the Kalman filter) and a backward algorithm (the Rauch–Tung–Striebel smoother), except that each step involves an integral instead of a sum. Due to the multivariate normal assumption, these integrals can be computed analytically, leading to algorithms that are mathematically elegant and computationally efficient.
+\subsection{Example}
+\begin{itemize}
+\item To illustrate with a simple example, consider an object that has been launched into the air. For simplicity, let's only consider the vertical dimension, height. Suppose the hidden state $z_j$ consists of the acceleration $a_j$, velocity $v_j$, and position $r_j$ at time $t_j$, specifically,
+$$ z_j = \begin{bmatrix}a_j\\v_j\\r_j \end{bmatrix} .$$
+\item From basic physics, we know that acceleration is the time-derivative of velocity, and velocity is the time-derivative of position:
+\begin{align*}
+& a(t) = {d \over d t} v(t)\\
+& v(t) ={d \over d t} r(t).
+\end{align*}
+\item Therefore, by first-order Taylor approximations to $v_{j+1} = v(t_{j+1})$ and $r_{j+1} = r(t_{j+1})$,
+\begin{align*}
+& v_{j+1} \approx v_j + (t_{j+1} - t_j) a_j\\
+& r_{j+1} \approx r_j + (t_{j+1} - t_j) v_j.
+\end{align*}
+These approximations will be good when $t_{j+1} - t_j$ is small. (A slight improvement for $r_{j+1}$ could easily be obtained by using a second-order Taylor approximation, leading to $r_{j+1}\approx r_j + (t_{j+1} - t_j) v_j + \tfrac{1}{2} (t_{j+1} - t_j)^2 a_j$.)
+\item This suggests a way of predicting the velocity and position at time step $j+1$ given the state at time step $j$.
+How could we predict the acceleration, $a_{j+1}$? The simplest possible thing would be to assume that it is close to $a_j$, in other words, $a_{j+1} \approx a_j$. (A more sophisticated approach would be to also account for air resistance, i.e., drag, and any other known forces.)
+\item For simplicity, let's assume $dt = t_{j+1} - t_j$ is the same for all $j$. Then these approximations lead us to choose:
+$$ F = \begin{bmatrix} 1 & 0 & 0 \\ 
+                      dt & 1 & 0 \\ 
+                      0 & dt & 1 \end{bmatrix},$$
+so that in the model, the transition distribution $p(z_{j+1} | z_j) = \N(z_{j+1} \mid F z_j,Q)$ has mean
+$$ F z_j = \begin{bmatrix}a_j\\v_j + a_j dt\\r_j + v_j dt \end{bmatrix} .$$
+\item How should we choose $H$? Suppose that at each time step $j$, we observe a noisy measurement of acceleration, $\tilde a_j$, and a noisy measurement of position, $\tilde r_j$:
+$$ x_j = \begin{bmatrix}\tilde a_j\\\tilde r_j \end{bmatrix} .$$
+If we assume the measurements are unbiased, then this implies
+$$ H = \begin{bmatrix} 1 & 0 & 0\\
+                       0 & 0 & 1 \end{bmatrix}, $$
+so that in the model, the emission distribution $p(x_j | z_j) = \N(x_j \mid H z_j,R)$ has mean
+$$ H z_j = \begin{bmatrix}a_j\\r_j\end{bmatrix} .$$
+\item The measurement covariance matrix $R$ should be chosen based on the noise/error of the instruments used to measure acceleration and position, for example, something like
+$$ R = \begin{bmatrix} \sigma_a^2 & 0 \\
+                       0 & \sigma_r^2 \end{bmatrix}, $$
+assuming the errors are uncorrelated. Appropriate choices of $\sigma_a^2$ and $\sigma_r^2$ can be obtained from manufacturer's specifications and/or from calibration experiments, or they could be estimated from the data itself.
+\item How should we choose $Q$? This is a bit trickier since the accuracy of the physical model might not be obvious, \textit{a priori}. One approach is to estimate $Q$ based on the data. We won't go into details about how to do this, but a simple way is to first choose an initial guess for $Q$, run the Kalman filter and smoother algorithms to estimate the trajectory, and then estimate $Q$ based on this inferred trajectory. To make an initial guess of $Q$ with roughly the right order of magnitude, here is one possibility: if we expect the approximation error to accumulate like Brownian motion, then the error after $dt$ time should have variance of order $dt$. A more principled approach would be to use expectation-maximization.
+\item As usual, it's a good idea to do a sensitivity analysis to see how much the results depend on the choice of parameters, especially for parameters about which you are most uncertain.
+\end{itemize}
 
 
+\section{Overview of inference algorithms}
+
+\begin{itemize}
+\item As in the case of a discrete-state HMM, there is a forward algorithm (the Kalman filter) and a backward algorithm (the Rauch--Tung--Striebel smoother), except that now, each step involves an integral instead of a sum. Due to the linear-Gaussian assumptions in the model, these integrals can be computed analytically, leading to algorithms that are mathematically elegant and computationally efficient.
+\item Recall that for a discrete-state HMM, the forward and backward algorithms involve computing $s_j(z_j) = p(x_{1:j},z_j)$ and $r_j(z_j) = p(x_{j +1:n} | z_j)$ for every possible value of $z_j$. In a continuous-state model, however, we cannot compute these quantities for every possible value of $z_j$, since there are infinitely many possible values.
+\item What we can do, instead, is to work in terms of a parametric representation. This involves a slight change of perspective. First, note that 
+\begin{align*}
+& p(z_j | x_{1:j}) \propto s_j(z_j), \text{ and}\\
+& p(z_j | x_{1:n}) \propto s_j(z_j) r_j(z_j).
+\end{align*}
+It turns out that under the assumed model, these are multivariate normal distributions, in other words,
+\begin{align*}
+& p(z_j | x_{1:j}) = \N(z_j | \mu_j,V_j)\\
+& p(z_j | x_{1:n}) = \N(z_j | \hat\mu_j,\hat V_j)
+\end{align*}
+for some $\mu_j,V_j,\hat\mu_j,\hat V_j$. Consequently, we can reformulate the forward and backward algorithms in terms of the parameters $\mu_j,V_j,\hat\mu_j,\hat V_j$, rather than computing the density at every point. 
+\item The Kalman filter is identical to the forward algorithm for discrete-state HMMs, except that it is expressed in terms of $\mu_j$ and $V_j$ instead of $s_j(z_j)$ (and the derivation involves an integral instead of a sum). So, even though the derivation of the Kalman filter may seem a bit complicated, remember that all we are doing is expressing the forward algorithm in terms of multivariate normal parameters.
+\item The Rauch--Tung--Striebel (RTS) smoother is similar to (but not identical to) the backward algorithm, and is expressed in terms of $\hat\mu_j$ and $\hat V_j$ rather than $r_j(z_j)$. (The main difference between the RTS smoother and the backward algorithm is that the RTS smoother works in terms of $s_j(z_j) r_j(z_j)$ instead of $r_j(z_j)$.)
+\end{itemize}
+
+\subsection{Two very useful properties of multivariate normals}
+
+\begin{itemize}
+\item Multivariate normal distributions have a couple of special properties that we will use over and over again the derivation of the Kalman filter and smoother.
+\vspace{1ex}
+\begin{itemize}
+\item[(a)] $\displaystyle\int \N(y | A z + b,C) \N(z | m,V) d z
+= \N(y \mid A m + b, A V A^\T + C) $,
+\vspace{2ex}
+\item[(b)] $\displaystyle \N(y | A z + b,C) \N(z | m,V)
+\,\mathop{\propto}_z\, \N\big(z \,\big\vert\, m + K(y -(A m + b)), (I - K A) V\big)$
+\end{itemize}
+where 
+$$ K = V A^\T(A V A^\T + C)^{-1}. $$
+% $$ K = V A^\T(A V A^\T + C)^{-1} = (A^\T C^{-1} A + V^{-1})^{-1} A^\T C^{-1}. $$
+% Either of these two expressions for $K$ can be used, but the first expression for $K$ will tend to be easier to compute if the dimension of $y$ is smaller than the dimension of $z$.
+\item Equations (a) and (b) hold for any $A\in \R^{d_y \times d_z}$, $b\in\R^{d_y}$, $C \in \R^{d_y \times d_y}$ symmetric positive definite, $m \in \R^{d_z}$, and $V \in \R^{d_z \times d_z}$ symmetric positive definite, where $d_y$ and $d_z$ are the dimensions of $y$ and $z$, respectively.
+\item These equations can be interpreted as follows: if $Z \sim \N(m,V)$ and $Y \mid Z=z \sim \N(A z + b,C)$, then (a) tells us the marginal distribution of $Y$ and (b) tells us the conditional distribution of $Z \mid Y = y$.
+\item (Bishop provides similar formulae in equations 2.113 - 2.117 on page 93, except that in (b) above, we have rewritten the right-hand side using the Woodbury matrix identity and equation C.5 of Bishop.)
+\end{itemize}
 
 
+\section{Kalman filter (forward algorithm)}
+
+\begin{itemize}
+\item Recall that the assumed model is:
+\begin{align*}
+& p(z_1) = \N(z_1 \mid \mu_0,V_0)\\
+& p(z_j | z_{j-1}) = \N(z_j \mid F z_{j-1},Q)\\
+& p(x_j | z_j) = \N(x_j \mid H z_j,R).
+\end{align*}
+\item In the Kalman filter, we compute the parameters of $p(z_j | x_{1:j})$ sequentially for $j = 1,\ldots,n$, in that order.
+\item First, consider $j = 1$.
+\begin{align*}
+p(z_1 | x_1) &\mathop{\propto}_{z_1} p(x_1 | z_1) p(z_1)
+= \N(x_1 | H z_1,R) \N(z_1 | \mu_0,V_0)\\
+& \mathop{\propto}_{z_1} \N\big(z_1 \mid \mu_0+ K_1(x_1 - H \mu_0),\,(I - K_1 H) V_0 \big)
+\end{align*}
+by (b) with $y = x_1$, $z = z_1$, $A = H$, $b = 0$, $C = R$, $m = \mu_0$, and $V = V_0$, if we define
+$$K_1 = V_0 H^\T(H V_0 H^\T + R)^{-1}. $$
+\item Therefore, $p(z_1 | x_1) = \N(z_1 | \mu_1,V_1)$ where
+\begin{align*}
+\mu_1 & = \mu_0+ K_1(x_1 - H \mu_0)\\
+V_1 & = (I - K_1 H) V_0.
+\end{align*}
+\item Now, at the general step $j$, suppose that $p(z_{j-1} | x_{1:j-1}) = \N(z_{j-1} | \mu_{j-1},V_{j-1})$ for some $\mu_{j-1},V_{j-1}$. Then
+\begin{align*}
+p(z_j | x_{1:j}) &\mathop{\propto}_{z_j} p(x_{1:j},z_j) = \int p(x_{1:j},z_{j-1},z_j) d z_{j-1}\\
+& = \int p(x_{1:j-1},z_{j-1}) p(z_j | z_{j-1}) p(x_j | z_j) d z_{j-1}\\
+&\mathop{\propto}_{z_j} \int \N(z_{j-1} | \mu_{j-1},V_{j-1})
+\N(z_j | F z_{j-1},Q) \N(x_j | H z_j,R) d z_{j-1}\\
+& = \N(x_j | H z_j,R) \int \N(z_j | F z_{j-1},Q) \N(z_{j-1} | \mu_{j-1},V_{j-1}) d z_{j-1}\\
+& = \N(x_j | H z_j,R) \N(z_j \mid F \mu_{j-1},F V_{j-1} F^\T + Q)\\
+\intertext{by (a) with $y = z_j$, $z = z_{j-1}$, $A = F$, $b = 0$, $C = Q$, $m = \mu_{j-1}$, and $V = V_{j-1}$,}
+& \mathop{\propto}_{z_j} \N(z_j \mid F \mu_{j-1} + K_j(x_j - H F \mu_{j-1}),\,(I - K_j H) V)
+\end{align*}
+by (b) with $y = x_j$, $z = z_j$, $A = H$, $b = 0$, $C = R$, $m = F \mu_{j-1}$, and $V = F V_{j-1} F^\T + Q$, if we define
+$$ K_j = V H^\T(H V H^\T + R)^{-1}. $$
+\item To avoid confusion, and for later reference, let's denote $V$ by $P_{j-1}$, i.e.,
+$$ P_{j-1} = F V_{j-1} F^\T + Q. $$
+\item Therefore, $p(z_j | x_{1:j}) = \N(z_j | \mu_j,V_j)$, where
+\begin{align*}
+\mu_j & = F \mu_{j-1} + K_j(x_j - H F \mu_{j-1})\\
+V_j & = (I - K_j H)P_{j-1}.
+\end{align*}
+\item Putting all this together, we have the following algorithm.
+\end{itemize}
+
+\subsection*{Kalman filter algorithm}
+Inputs: Observed data $x_1,\ldots,x_n$ and model parameters $\mu_0,V_0,F,Q,H,R$.
+\begin{enumerate}
+\item Initialize:
+\begin{align*}
+K_1 &= V_0 H^\T(H V_0 H^\T + R)^{-1}\\
+\mu_1 & = \mu_0+ K_1(x_1 - H \mu_0)\\
+V_1 & = (I - K_1 H) V_0\\
+P_1 &= F V_1 F^\T + Q.
+\end{align*}
+\item For $j = 2,\ldots,n$:
+\begin{align*}
+K_j &= P_{j-1} H^\T(H P_{j-1} H^\T + R)^{-1}\\
+\mu_j & = F \mu_{j-1} + K_j(x_j - H F \mu_{j-1})\\
+V_j & = (I - K_j H)P_{j-1}\\
+P_j &= F V_j F^\T + Q.
+\end{align*}
+\end{enumerate}
+Then $p(z_j | x_{1:j}) = \N(z_j | \mu_j,V_j)$ for all $j=1,\ldots,n$. Note that the algorithm can be used to perform real-time estimation of the current state as the data arrives, in an ``online'' fashion. Specifically, the mean $\mu_j$ can be used as an estimate of $z_j$, and our uncertainty in this estimate is quantified by $V_j$.
 
 
+\section{Rauch--Tung--Striebel smoother (backward algorithm)}
 
+\begin{itemize}
+\item In the Rauch--Tung--Striebel smoother, we compute the parameters of $p(z_j | x_{1:n})$ sequentially for $j = n,n-1,\ldots,1$, in that order.
+\item First, consider $j = n$. Actually, we already have the answer for this step, since we know that $p(z_n | x_{1:n}) = \N(z_n | \hat\mu_n,\hat V_n)$, where $\hat \mu_n = \mu_n$ and $\hat V_n = V_n$, with $\mu_n$ and $V_n$ being the mean and covariance computed in the last step of the Kalman filter.
+\item At the general step $j$, suppose $p(z_{j +1} | x_{1:n}) = \N(z_{j +1} | \hat\mu_{j +1},\hat V_{j +1})$. Then
+$$ p(z_j | x_{1:n}) = \int p(z_j|z_{j +1},x_{1:n}) p(z_{j +1} | x_{1:n}) d z_{j +1}. $$
+We know $p(z_{j+1}| x_{1:n}) = \N(z_{j +1} | \hat\mu_{j +1},\hat V_{j +1})$, but we need to do some work to get the parameters of $p(z_j | z_{j+1},x_{1:n})$:
+\begin{align*}
+p(z_j | z_{j+1},x_{1:n}) & \mathop{\propto}_{z_j} p(z_j,z_{j+1},x_{1:n}) = p(z_j , x_{1:j}) p(z_{j+1} | z_j) p(x_{j+1:n} | z_{j+1})\\
+&~~~~\text{(by the conditional independence properties of the model)}\\
+& \mathop{\propto}_{z_j} p(z_{j+1} | z_j) p(z_j | x_{1:j})
+= \N(z_{j+1} | F z_j,Q) \N(z_j | \mu_j,V_j)\\
+&~~~~\text{(by the definition of $\mu_j$ and $V_j$ in the Kalman filter)}\\
+&\mathop{\propto}_{z_j} \N \big(z_j \,\big \vert\, \mu_j + K(z_{j+1} - F \mu_j),\, (I - K F) V_j \big)
+\end{align*}
+by (b) with $y = z_{j+1}$, $z = z_j$, $A = F$, $b = 0$, $C = Q$, $m = \mu_j$, and $V = V_j$, if we define
+$$ K = V_j F^\T(F V_j F^\T + Q)^{-1}. $$
+Note that $K = V_j F^\T P_j^{-1}$, by the definition of $P_j$ in the Kalman filter. 
+\item Now that we have a nice expression for $p(z_j | z_{j+1},x_{1:n})$, we can plug it into the integral above to get
+\begin{align*}
+p(z_j | x_{1:n}) & = \int
+\N\big(z_j \,\vert\, \mu_j + K(z_{j+1} - F \mu_j), \,(I - K F) V_j \big) \N(z_{j+1} | \hat \mu_{j+1},\hat V_{j+1}) d z_{j+1}\\
+& = \N \big(z_j \,\vert \,K \hat \mu_{j+1} + \mu_j - K F \mu_j,\, K \hat V_{j+1} K^\T + (I - K F) V_j \big)\\
+\intertext{by (a) with $y = z_j$, $z = z_{j+1}$, $A = K$, $b = \mu_j - K F \mu_j$, $C =(I - K F) V_j$, $m = \hat \mu_{j+1}$, and $V = \hat V_{j+1}$,}
+& = \N \big(z_j \,\vert\,\mu_j + K(\hat \mu_{j+1}- F \mu_j),\, V_j + K(\hat V_{j+1} - P_j) K^\T \big)
+\end{align*}
+since $(I - K F) V_j = V_j - K P_j P_j^{-1} F V_j = V_j - K P_j K^\T$ (due to our earlier observation that $K = V_j F^\T P_j^{-1}$).
+\item To avoid confusion, let's denote $K$ by $C_j$, i.e., 
+$$ C_j = V_j F^\T P_j^{-1}. $$
+\item Therefore, we have $p(z_j | x_{1:n}) = \N(z_j | \hat \mu_j,\hat V_j)$ where
+\begin{align*}
+\hat \mu_j & = \mu_j + C_j(\hat \mu_{j+1} - F \mu_j)\\
+\hat V_j & = V_j + C_j(\hat V_{j+1} - P_j) C_j^\T.
+\end{align*}
+\item Putting all this together, we get the following algorithm.
+\end{itemize}
 
-
-
+\subsection*{RTS smoother algorithm}
+Inputs: $\mu_j$, $V_j$, and $P_j$ for each $j = 1,\ldots,n$, computed by the Kalman filter algorithm.
+\begin{enumerate}
+\item Initialize: $\hat \mu_n = \mu_n$ and $\hat V_n = V_n$.
+\item For $j = n-1,n-2,\ldots,1$:
+\begin{align*}
+C_j & = V_j F^\T P_j^{-1}\\
+\hat \mu_j & = \mu_j + C_j(\hat \mu_{j+1} - F \mu_j)\\
+\hat V_j & = V_j + C_j(\hat V_{j+1} - P_j) C_j^\T.
+\end{align*}
+\end{enumerate}
+Then $p(z_j | x_{1:n}) = \N(z_j | \hat \mu_j,\hat V_j)$ for all $j = 1 \ldots,n$. The smoother algorithm can be interpreted as retrospectively improving the Kalman filter's estimate of the state $z_j$ using the additional data observed at time steps $j+1,\ldots,n$.
 
 \end{document}
 
