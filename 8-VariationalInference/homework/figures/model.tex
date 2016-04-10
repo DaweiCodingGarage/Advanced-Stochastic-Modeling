@@ -1,0 +1,44 @@
+\begin{center}
+\tikzstyle{hidden}=[circle,
+                        thick,
+                        draw=black,
+                        fill=white]
+                        % minimum size=1.5ex,
+
+
+\tikzstyle{observed}=[circle,
+                        thick,
+                        draw=black,
+                        fill=gray!60]
+                        % minimum size=1.5ex,
+
+
+\tikzstyle{plate}=[rectangle,
+                        draw=black,
+                        fill=none,
+                        inner sep=.8ex,
+                        rounded corners=.6ex]
+
+\begin{tikzpicture}[>=latex] %,text height=1.5ex,text depth=0.25ex]
+  % The various elements are conveniently placed using a matrix:
+  \matrix[row sep=2.5ex,column sep=2.5ex] {
+        \node (w) [hidden] {\large $w$};  & 
+        \node (a) [hidden] {\large $\alpha$};  \\
+        \node (z) [hidden] { $Z_j$};  & 
+        \node (x) [hidden] { $X_j$};
+		\\
+    };
+    
+    % The diagram elements are now connected through arrows:
+    \path[->]
+        (w) edge[thick] (z)
+        (z) edge[thick] (x)
+        (a) edge[thick] (x)
+;
+    \begin{pgfonlayer}{background}
+        \node (myplate) [plate, fit=(x)(z)] {};
+        %\node[anchor=south east,inner sep=.5ex] at (myplate.south east) {\small $j=1,\ldots,n$};
+    \end{pgfonlayer}
+
+\end{tikzpicture}
+\end{center}
